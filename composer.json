@@ -1,0 +1,21 @@
+{
+    "name": "piagrammist/mp-self",
+    "description": "Basic self user-bot made with MadelineProto.",
+    "license": "MIT",
+    "require": {
+        "danog/madelineproto": "^8.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Rz\\": "src/"
+        },
+        "files": ["config.php"]
+    },
+    "authors": [
+        {
+            "name": "Reza Royani",
+            "email": "Piagrammist@gmail.com",
+            "homepage": "https://github.com/Piagrammist"
+        }
+    ]
+}
