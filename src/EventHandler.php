@@ -117,15 +117,15 @@ final class EventHandler extends SimpleEventHandler
 
             '',
             '`.ping`',
-            '_Check online status of the bot._',
+            "_Check robot's responding._",
 
             '',
             '`.status`',
-            "_Get info about robot's chats & the server._",
+            "_Get info about the server & robot's chats._",
 
             '',
             "`.style <{$styles}>`",
-            '_Switch the text styling of the bot._',
+            '_Switch the text styling._',
 
             '',
             '`.spell <txt>`',
