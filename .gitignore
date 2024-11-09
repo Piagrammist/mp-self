@@ -5,5 +5,8 @@
 .DS_Store
 
 /vendor/
-/config.php
 *.phar
+
+/session/
+/config.php
+*.log
