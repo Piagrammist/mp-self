@@ -251,6 +251,52 @@ final class EventHandler extends SimpleEventHandler
         );
     }
 
+    #[FilterCommand('info')]
+    public function cmdInfo(FromAdminOrOutgoing&Message $message): void
+    {
+        $chat = $this->getInfo($message->chatId);
+        $userId = ($replied = $message->getReply())
+            ? $replied->senderId
+            : $message->commandArgs[0]
+                ?? null;
+        $empty = '—';
+        $username = isset($chat['Chat']['username']) ? "`{$chat['Chat']['username']}`" : $empty;
+        $date = \date('j/n/Y', $chat['Chat']['date']);
+        $lines = [
+            "*Chat*",
+            $this->prefix(
+                "_Id:_ `{$chat['bot_api_id']}`",
+                "_Title:_ `{$chat['Chat']['title']}`",
+                "_Username:_ {$username}",
+                "_Creation:_ `{$date}`",
+                "_Type:_ `{$chat['type']}`",
+            ),
+        ];
+        if ($userId) {
+            try {
+                $user = $this->getInfo($userId)['User'];
+                $name = $user['first_name'] . (
+                    isset($user['last_name']) ? " {$user['last_name']}" : ''
+                );
+                $username = isset($user['username']) ? "`{$user['username']}`" : $empty;
+                $lines = [
+                    "*User*",
+                    $this->prefix(
+                        "_Id:_ `{$user['id']}`",
+                        "_Name:_ `{$name}`",
+                        "_Username:_ {$username}",
+                    ),
+                    \str_repeat('—', 13),
+                    ...$lines,
+                ];
+            } catch (\Throwable) {
+                $message->editText($this->style("[ERROR] Invalid user peer!"), ParseMode::MARKDOWN);
+                return;
+            }
+        }
+        $message->editText(concatLines(...$lines), ParseMode::MARKDOWN);
+    }
+
     #[FilterCommand('status')]
     public function cmdStatus(FromAdminOrOutgoing&Message $message): void
     {
@@ -295,7 +341,7 @@ final class EventHandler extends SimpleEventHandler
                     "_RAM usage: {$mem}_",
                     "_Peak RAM usage: {$peakMem}_",
                     "_Log volume: {$log}_"
-                )
+                ),
             ),
             ParseMode::MARKDOWN,
         );
@@ -419,7 +465,7 @@ final class EventHandler extends SimpleEventHandler
                 return "Successfully deleted {$tmp} messages in {$diff}s!";
             } catch (\Throwable $e) {
                 $this->logger("Surfaced while deleting: $e");
-                return '[ERROR] Check the logs';
+                return '[ERROR] Check the logs.';
             }
         })();
         try {
