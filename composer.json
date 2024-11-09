@@ -9,7 +9,7 @@
         "psr-4": {
             "Rz\\": "src/"
         },
-        "files": ["config.php"]
+        "files": ["config.php", "src/functions.php"]
     },
     "authors": [
         {

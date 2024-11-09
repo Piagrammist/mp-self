@@ -1583,16 +1583,16 @@
         },
         {
             "name": "amphp/sql-common",
-            "version": "v2.0.1",
+            "version": "v2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/sql-common.git",
-                "reference": "85449d526f33e1b24a17ae0f1b729536707b165b"
+                "reference": "069183d57f17f85c60842ea3a8ce5ff52dba5399"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/sql-common/zipball/85449d526f33e1b24a17ae0f1b729536707b165b",
-                "reference": "85449d526f33e1b24a17ae0f1b729536707b165b",
+                "url": "https://api.github.com/repos/amphp/sql-common/zipball/069183d57f17f85c60842ea3a8ce5ff52dba5399",
+                "reference": "069183d57f17f85c60842ea3a8ce5ff52dba5399",
                 "shasum": ""
             },
             "require": {
@@ -1627,7 +1627,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/sql-common/issues",
-                "source": "https://github.com/amphp/sql-common/tree/v2.0.1"
+                "source": "https://github.com/amphp/sql-common/tree/v2.0.2"
             },
             "funding": [
                 {
@@ -1635,7 +1635,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-02T20:30:11+00:00"
+            "time": "2024-10-27T16:04:14+00:00"
         },
         {
             "name": "amphp/sync",
@@ -1714,16 +1714,16 @@
         },
         {
             "name": "amphp/websocket",
-            "version": "v2.0.3",
+            "version": "v2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/websocket.git",
-                "reference": "1dc9d2c3b9b10965510d2762181254d825098419"
+                "reference": "963904b6a883c4b62d9222d1d9749814fac96a3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/websocket/zipball/1dc9d2c3b9b10965510d2762181254d825098419",
-                "reference": "1dc9d2c3b9b10965510d2762181254d825098419",
+                "url": "https://api.github.com/repos/amphp/websocket/zipball/963904b6a883c4b62d9222d1d9749814fac96a3b",
+                "reference": "963904b6a883c4b62d9222d1d9749814fac96a3b",
                 "shasum": ""
             },
             "require": {
@@ -1783,7 +1783,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/websocket/issues",
-                "source": "https://github.com/amphp/websocket/tree/v2.0.3"
+                "source": "https://github.com/amphp/websocket/tree/v2.0.4"
             },
             "funding": [
                 {
@@ -1791,7 +1791,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-12-28T23:16:28+00:00"
+            "time": "2024-10-28T21:28:45+00:00"
         },
         {
             "name": "amphp/websocket-client",
@@ -2380,16 +2380,16 @@
         },
         {
             "name": "danog/madelineproto",
-            "version": "8.3.2",
+            "version": "8.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/MadelineProto.git",
-                "reference": "2fc1313aee6e5e92cdda605e6a133e4a3c68543a"
+                "reference": "1eb71f25ca6a9b53f11f9c1bece9fb25105e2a9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/2fc1313aee6e5e92cdda605e6a133e4a3c68543a",
-                "reference": "2fc1313aee6e5e92cdda605e6a133e4a3c68543a",
+                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/1eb71f25ca6a9b53f11f9c1bece9fb25105e2a9f",
+                "reference": "1eb71f25ca6a9b53f11f9c1bece9fb25105e2a9f",
                 "shasum": ""
             },
             "require": {
@@ -2496,7 +2496,7 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/MadelineProto/issues",
-                "source": "https://github.com/danog/MadelineProto/tree/8.3.2"
+                "source": "https://github.com/danog/MadelineProto/tree/8.3.5"
             },
             "funding": [
                 {
@@ -2504,7 +2504,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-09-28T06:56:03+00:00"
+            "time": "2024-10-21T15:56:46+00:00"
         },
         {
             "name": "danog/primemodule",
@@ -3526,16 +3526,16 @@
         },
         {
             "name": "promphp/prometheus_client_php",
-            "version": "v2.11.0",
+            "version": "v2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PromPHP/prometheus_client_php.git",
-                "reference": "35d5a68628ea18209938bc1b8796646015ab93cf"
+                "reference": "50b70a6df4017081917e004f177a3c01cc8115db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PromPHP/prometheus_client_php/zipball/35d5a68628ea18209938bc1b8796646015ab93cf",
-                "reference": "35d5a68628ea18209938bc1b8796646015ab93cf",
+                "url": "https://api.github.com/repos/PromPHP/prometheus_client_php/zipball/50b70a6df4017081917e004f177a3c01cc8115db",
+                "reference": "50b70a6df4017081917e004f177a3c01cc8115db",
                 "shasum": ""
             },
             "require": {
@@ -3588,9 +3588,9 @@
             "description": "Prometheus instrumentation library for PHP applications.",
             "support": {
                 "issues": "https://github.com/PromPHP/prometheus_client_php/issues",
-                "source": "https://github.com/PromPHP/prometheus_client_php/tree/v2.11.0"
+                "source": "https://github.com/PromPHP/prometheus_client_php/tree/v2.12.0"
             },
-            "time": "2024-08-05T07:58:08+00:00"
+            "time": "2024-10-18T07:33:22+00:00"
         },
         {
             "name": "psr/http-factory",
