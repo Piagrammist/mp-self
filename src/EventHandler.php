@@ -101,7 +101,7 @@ final class EventHandler extends SimpleEventHandler
         $styles = escape('`', \implode('|', \array_keys(self::$allowedStyles)));
         $prefixes = /*escape(['`', '_'], */
             \implode(
-                ', ',
+                '  ',
                 \array_map(
                     static fn($e) => "`$e`",
                     \array_column(CommandType::cases(), 'value')
@@ -112,7 +112,7 @@ final class EventHandler extends SimpleEventHandler
             '*Robot commands*',
 
             '',
-            '`.bot <on/off>`',
+            '`.bot <on|off>`',
             '_Make the robot active or inactive._',
 
             '',
@@ -124,8 +124,12 @@ final class EventHandler extends SimpleEventHandler
             "_Execute the php code._",
 
             '',
-            '`.cp <?peer> [+reply]`',
+            '`.cp <?peer> (reply)`',
             "_Copy and send the replied message to any chat. (default peer: Saved Messages)_",
+
+            '',
+            '`.info <?peer> [reply]`',
+            "_Get info about the chat (+ a user depending on the reply/arg value)._",
 
             '',
             '`.status`',
@@ -153,7 +157,11 @@ final class EventHandler extends SimpleEventHandler
 
             '',
             \str_repeat('—', 13),
-            "_Supported command prefixes: {$prefixes}_",
+            "*Notes*",
+            $this->prefix(
+                "_Supported command prefixes are \"{$prefixes}\"_",
+                "_`()` means required reply, and `[]`, an optional one._",
+            ),
         );
         $message->editText($help, ParseMode::MARKDOWN);
     }
