@@ -124,6 +124,10 @@ final class EventHandler extends SimpleEventHandler
             "_Execute the php code._",
 
             '',
+            '`.cp <?peer> [+reply]`',
+            "_Copy and send the replied message to any chat. (default peer: Saved Messages)_",
+
+            '',
             '`.status`',
             "_Get info about the server & robot's chats._",
 
@@ -221,6 +225,30 @@ final class EventHandler extends SimpleEventHandler
         } finally {
             $message->reply($output, ParseMode::MARKDOWN);
         }
+    }
+
+    #[FilterCommand('cp')]
+    public function cmdCopyMessage(FromAdminOrOutgoing&Message $message): void
+    {
+        $peer = $message->commandArgs[0] ?? 'me';
+        $replied = $message->getReply();
+        if (!$replied) {
+            return;
+        }
+        $params = [
+            'peer'    => $peer,
+            'message' => $replied->message,
+        ];
+        if (!empty($replied->media))    $params['media']    = $replied->media;
+        if (!empty($replied->entities)) $params['entities'] = $replied->entities;
+        $this->messages->{!empty($replied->media) ? 'sendMedia' : 'sendMessage'}(...$params);
+        $message->editText(
+            $this->style(\sprintf(
+                "Message copy sent to %s.",
+                $peer === 'me' ? 'Saved Messages' : $peer,
+            )),
+            ParseMode::MARKDOWN,
+        );
     }
 
     #[FilterCommand('status')]
