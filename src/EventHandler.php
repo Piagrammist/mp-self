@@ -215,13 +215,17 @@ final class EventHandler extends SimpleEventHandler
             return;
 
         $code = \mb_substr($message->message, 2);
+        $toJSON = fn ($value): string =>
+            \json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $tgJSON = fn ($value): string =>
+            "```json\n" . $toJSON($value) . "```";
         try {
             \ob_start();
             eval($code);
             $output = \ob_get_clean();
-            $output = $output ? "```Result\n$output```" : $this->style("No output.");
+            $output = $output ? "*Result:*\n$output" : $this->style("No output.");
         } catch (\Throwable $e) {
-            $output = "```Error\n{$e->getMessage()}```";
+            $output = "*Error:*\n```\n{$e->getMessage()}```";
         } finally {
             $message->reply($output, ParseMode::MARKDOWN);
         }
