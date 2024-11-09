@@ -30,6 +30,9 @@ _Make the robot active or inactive._
 `.ping`
 _Check robot's responding._
 
+`.x <code>`
+_Execute the php code._
+
 `.status`
 _Get info about the server & robot's chats._
 

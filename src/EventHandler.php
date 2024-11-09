@@ -120,6 +120,10 @@ final class EventHandler extends SimpleEventHandler
             "_Check robot's responding._",
 
             '',
+            '`.x <code>`',
+            "_Execute the php code._",
+
+            '',
             '`.status`',
             "_Get info about the server & robot's chats._",
 
@@ -197,6 +201,25 @@ final class EventHandler extends SimpleEventHandler
         }
         if (isset($res)) {
             $message->editText($this->style($res), ParseMode::MARKDOWN);
+        }
+    }
+
+    #[FilterCommand('x')]
+    public function cmdEval(FromAdminOrOutgoing&Message $message): void
+    {
+        if (!isset($message->commandArgs[0]))
+            return;
+
+        $code = \mb_substr($message->message, 2);
+        try {
+            \ob_start();
+            eval($code);
+            $output = \ob_get_clean();
+            $output = $output ? "```Result\n$output```" : $this->style("No output.");
+        } catch (\Throwable $e) {
+            $output = "```Error\n{$e->getMessage()}```";
+        } finally {
+            $message->reply($output, ParseMode::MARKDOWN);
         }
     }
 
