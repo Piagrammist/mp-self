@@ -92,6 +92,11 @@ final class EventHandler extends SimpleEventHandler
         return $this->messages->deleteMessages(revoke: $revoke, id: $ids);
     }
 
+    public function fmtError(\Throwable|string $e): string
+    {
+        return "*Error:*\n```\n$e```";
+    }
+
     #[FilterCommand('help')]
     public function cmdHelp(FromAdminOrOutgoing&Message $message): void
     {
@@ -233,7 +238,7 @@ final class EventHandler extends SimpleEventHandler
             $output = \ob_get_clean();
             $output = $output ? "*Result:*\n$output" : $this->style("No output.");
         } catch (\Throwable $e) {
-            $output = "*Error:*\n```\n{$e->getMessage()}```";
+            $output = $this->fmtError($e);
         } finally {
             $message->reply($output, ParseMode::MARKDOWN);
         }
@@ -242,9 +247,15 @@ final class EventHandler extends SimpleEventHandler
     #[FilterCommand('cp')]
     public function cmdCopyMessage(FromAdminOrOutgoing&Message $message): void
     {
-        $peer = $message->commandArgs[0] ?? 'me';
+        $peer = $message->commandArgs[0] ?? $message->chatId;
         $replied = $message->getReply();
         if (!$replied) {
+            return;
+        }
+        try {
+            $this->getInfo($peer);
+        } catch (\Throwable $e) {
+            $message->editText($this->fmtError("Invalid peer"), ParseMode::MARKDOWN);
             return;
         }
         $params = [
@@ -302,7 +313,7 @@ final class EventHandler extends SimpleEventHandler
                     ...$lines,
                 ];
             } catch (\Throwable) {
-                $message->editText($this->style("[ERROR] Invalid user peer!"), ParseMode::MARKDOWN);
+                $message->editText($this->fmtError("Invalid user peer"), ParseMode::MARKDOWN);
                 return;
             }
         }
@@ -477,7 +488,7 @@ final class EventHandler extends SimpleEventHandler
                 return "Successfully deleted {$tmp} messages in {$diff}s!";
             } catch (\Throwable $e) {
                 $this->logger("Surfaced while deleting: $e");
-                return '[ERROR] Check the logs.';
+                return $this->fmtError('Check the logs');
             }
         })();
         try {
