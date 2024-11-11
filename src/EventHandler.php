@@ -130,7 +130,7 @@ final class EventHandler extends SimpleEventHandler
 
             '',
             '`.cp <?peer> (reply)`',
-            "_Copy and send the replied message to any chat. (default peer: Saved Messages)_",
+            "_Copy and send the replied message to any chat. (default peer: current chat)_",
 
             '',
             '`.info <?peer> [reply]`',

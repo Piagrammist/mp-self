@@ -34,7 +34,7 @@ _Check robot's responding._
 _Execute the php code._
 
 `.cp <?peer> (reply)`
-_Copy and send the replied message to any chat. (default peer: Saved Messages)_
+_Copy and send the replied message to any chat. (default peer: current chat)_
 
 `.info <?peer> [reply]`
 _Get info about the chat (+ a user depending on the reply/arg value)._
