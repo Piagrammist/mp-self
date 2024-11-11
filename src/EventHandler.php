@@ -277,24 +277,28 @@ final class EventHandler extends SimpleEventHandler
     #[FilterCommand('info')]
     public function cmdInfo(FromAdminOrOutgoing&Message $message): void
     {
-        $chat = $this->getInfo($message->chatId);
-        $userId = ($replied = $message->getReply())
-            ? $replied->senderId
-            : $message->commandArgs[0]
-                ?? null;
         $empty = '—';
-        $username = isset($chat['Chat']['username']) ? "`{$chat['Chat']['username']}`" : $empty;
-        $date = \date('j/n/Y', $chat['Chat']['date']);
-        $lines = [
-            "*Chat*",
-            $this->prefix(
-                "_Id:_ `{$chat['bot_api_id']}`",
-                "_Title:_ `{$chat['Chat']['title']}`",
-                "_Username:_ {$username}",
-                "_Creation:_ `{$date}`",
-                "_Type:_ `{$chat['type']}`",
-            ),
-        ];
+        $chat = $this->getInfo($message->chatId);
+        if (!\in_array($chat['type'], ['user', 'bot'], true)) {
+            $userId = ($replied = $message->getReply())
+                ? $replied->senderId
+                : $message->commandArgs[0]
+                    ?? null;
+            $username = isset($chat['Chat']['username']) ? "`{$chat['Chat']['username']}`" : $empty;
+            $date = \date('j/n/Y', $chat['Chat']['date']);
+            $lines = [
+                "*Chat*",
+                $this->prefix(
+                    "_Id:_ `{$chat['bot_api_id']}`",
+                    "_Title:_ `{$chat['Chat']['title']}`",
+                    "_Username:_ {$username}",
+                    "_Creation:_ `{$date}`",
+                    "_Type:_ `{$chat['type']}`",
+                ),
+            ];
+        } else {
+            $userId = $message->chatId;
+        }
         if ($userId) {
             try {
                 $user = $this->getInfo($userId)['User'];
@@ -302,6 +306,7 @@ final class EventHandler extends SimpleEventHandler
                     isset($user['last_name']) ? " {$user['last_name']}" : ''
                 );
                 $username = isset($user['username']) ? "`{$user['username']}`" : $empty;
+                $hasChat = isset($lines);
                 $lines = [
                     "*User*",
                     $this->prefix(
@@ -309,14 +314,16 @@ final class EventHandler extends SimpleEventHandler
                         "_Name:_ `{$name}`",
                         "_Username:_ {$username}",
                     ),
-                    \str_repeat('—', 13),
-                    ...$lines,
                 ];
+                if ($hasChat) {
+                    $lines = \array_merge($lines, [\str_repeat('—', 13)], $lines);
+                }
             } catch (\Throwable) {
                 $message->editText($this->fmtError("Invalid user peer"), ParseMode::MARKDOWN);
                 return;
             }
         }
+        assert(\count($lines) > 0);
         $message->editText(concatLines(...$lines), ParseMode::MARKDOWN);
     }
 
