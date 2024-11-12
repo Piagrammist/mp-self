@@ -18,8 +18,8 @@ final class EventHandler extends SimpleEventHandler
 {
     private const DELAY = 1;
 
-    private bool $quiet = true;
     private bool $active = true;
+    private bool $verbose = true;
     private ?string $styleChar = '_';
     private ?string $prefixChar = '❍';
     private static array $allowedStyles = [
@@ -38,7 +38,7 @@ final class EventHandler extends SimpleEventHandler
 
     public function __sleep(): array
     {
-        return ['quiet', 'active', 'styleChar', 'prefixChar'];
+        return ['active', 'verbose', 'styleChar', 'prefixChar'];
     }
 
     public function style(string $text): string
@@ -242,15 +242,15 @@ final class EventHandler extends SimpleEventHandler
 
         $newStatus = \strtolower($message->commandArgs[0]);
         if ($newStatus === 'on') {
-            $res = !$this->quiet
+            $res = $this->verbose
                 ? 'Robot is quiet now!'
                 : 'Robot is already quiet!';
-            $this->quiet = true;
+            $this->verbose = false;
         } elseif ($newStatus === 'off') {
-            $res = $this->quiet
+            $res = !$this->verbose
                 ? 'Robot is verbose now!'
                 : 'Robot is already verbose!';
-            $this->quiet = false;
+            $this->verbose = true;
         }
         if (isset($res)) {
             $message->editText($this->style($res), ParseMode::MARKDOWN);
