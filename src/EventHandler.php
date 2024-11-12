@@ -183,6 +183,9 @@ final class EventHandler extends SimpleEventHandler
     #[FilterCommand('stop')]
     public function cmdStop(FromAdminOrOutgoing&Message $message): void
     {
+        if (!$this->active)
+            return;
+
         $message->editText($this->style('Stopping...'), ParseMode::MARKDOWN);
         $this->stop();
     }
@@ -190,6 +193,9 @@ final class EventHandler extends SimpleEventHandler
     #[FilterCommand('restart')]
     public function cmdRestart(FromAdminOrOutgoing&Message $message): void
     {
+        if (!$this->active)
+            return;
+
         if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
             $message->editText($this->style('Restart not available on the CLI!'), ParseMode::MARKDOWN);
             return;
@@ -224,6 +230,8 @@ final class EventHandler extends SimpleEventHandler
     #[FilterCommand('x')]
     public function cmdEval(FromAdminOrOutgoing&Message $message): void
     {
+        if (!$this->active)
+            return;
         if (!isset($message->commandArgs[0]))
             return;
 
@@ -247,6 +255,9 @@ final class EventHandler extends SimpleEventHandler
     #[FilterCommand('cp')]
     public function cmdCopyMessage(FromAdminOrOutgoing&Message $message): void
     {
+        if (!$this->active)
+            return;
+
         $peer = $message->commandArgs[0] ?? $message->chatId;
         $replied = $message->getReply();
         if (!$replied) {
@@ -277,6 +288,9 @@ final class EventHandler extends SimpleEventHandler
     #[FilterCommand('info')]
     public function cmdInfo(FromAdminOrOutgoing&Message $message): void
     {
+        if (!$this->active)
+            return;
+
         $empty = '—';
         $chat = $this->getInfo($message->chatId);
         if (!\in_array($chat['type'], ['user', 'bot'], true)) {
