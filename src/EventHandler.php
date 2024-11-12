@@ -18,6 +18,7 @@ final class EventHandler extends SimpleEventHandler
 {
     private const DELAY = 1;
 
+    private bool $quiet = true;
     private bool $active = true;
     private ?string $styleChar = '_';
     private ?string $prefixChar = '❍';
@@ -37,7 +38,7 @@ final class EventHandler extends SimpleEventHandler
 
     public function __sleep(): array
     {
-        return ['active', 'styleChar', 'prefixChar'];
+        return ['quiet', 'active', 'styleChar', 'prefixChar'];
     }
 
     public function style(string $text): string
@@ -205,7 +206,7 @@ final class EventHandler extends SimpleEventHandler
     }
 
     #[FilterCommand('bot')]
-    public function cmdBotActivation(FromAdminOrOutgoing&Message $message): void
+    public function cmdBot(FromAdminOrOutgoing&Message $message): void
     {
         if (!isset($message->commandArgs[0]))
             return;
@@ -221,6 +222,31 @@ final class EventHandler extends SimpleEventHandler
                 ? 'Robot is inactive now!'
                 : 'Robot is already inactive!';
             $this->active = false;
+        }
+        if (isset($res)) {
+            $message->editText($this->style($res), ParseMode::MARKDOWN);
+        }
+    }
+
+    #[FilterCommand('quiet')]
+    public function cmdQuiet(FromAdminOrOutgoing&Message $message): void
+    {
+        if (!$this->active)
+            return;
+        if (!isset($message->commandArgs[0]))
+            return;
+
+        $newStatus = \strtolower($message->commandArgs[0]);
+        if ($newStatus === 'on') {
+            $res = !$this->quiet
+                ? 'Robot is quiet now!'
+                : 'Robot is already quiet!';
+            $this->quiet = true;
+        } elseif ($newStatus === 'off') {
+            $res = $this->quiet
+                ? 'Robot is verbose now!'
+                : 'Robot is already verbose!';
+            $this->quiet = false;
         }
         if (isset($res)) {
             $message->editText($this->style($res), ParseMode::MARKDOWN);
