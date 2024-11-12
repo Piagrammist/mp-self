@@ -122,6 +122,10 @@ final class EventHandler extends SimpleEventHandler
             '_Make the robot active or inactive._',
 
             '',
+            '`.quiet <on|off>`',
+            "_Switch the robot's quiet mode._",
+
+            '',
             '`.ping`',
             "_Check robot's responding._",
 
