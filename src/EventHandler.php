@@ -191,7 +191,7 @@ final class EventHandler extends SimpleEventHandler
         if (!$this->active)
             return;
 
-        $message->editText($this->style('Stopping...'), ParseMode::MARKDOWN);
+        $this->verbose && $message->editText($this->style('Stopping...'), ParseMode::MARKDOWN);
         $this->stop();
     }
 
@@ -202,10 +202,10 @@ final class EventHandler extends SimpleEventHandler
             return;
 
         if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
-            $message->editText($this->style('Restart not available on the CLI!'), ParseMode::MARKDOWN);
+            $message->editText($this->fmtError('Restart not available on the CLI!'), ParseMode::MARKDOWN);
             return;
         }
-        $message->editText($this->style('Restarting...'), ParseMode::MARKDOWN);
+        $this->verbose && $message->editText($this->style('Restarting...'), ParseMode::MARKDOWN);
         $this->restart();
     }
 
@@ -227,7 +227,7 @@ final class EventHandler extends SimpleEventHandler
                 : 'Robot is already inactive!';
             $this->active = false;
         }
-        if (isset($res)) {
+        if ($this->verbose && isset($res)) {
             $message->editText($this->style($res), ParseMode::MARKDOWN);
         }
     }
@@ -306,7 +306,7 @@ final class EventHandler extends SimpleEventHandler
         if (!empty($replied->media))    $params['media']    = $replied->media;
         if (!empty($replied->entities)) $params['entities'] = $replied->entities;
         $this->messages->{!empty($replied->media) ? 'sendMedia' : 'sendMessage'}(...$params);
-        $message->editText(
+        $this->verbose && $message->editText(
             $this->style(\sprintf(
                 "Message copy sent to %s.",
                 $peer === 'me' ? 'Saved Messages' : $peer,
@@ -434,7 +434,7 @@ final class EventHandler extends SimpleEventHandler
             return;
 
         $this->styleChar = $newStyle === 'none' ? null : $newStyle;
-        $message->editText(
+        $this->verbose && $message->editText(
             $this->style('Successfully switched to ' . self::$allowedStyles[$newStyle] . ' text styling!'),
             ParseMode::MARKDOWN,
         );
@@ -508,7 +508,7 @@ final class EventHandler extends SimpleEventHandler
         if ($count < 1 || $count > 99)
             return;
 
-        $message->editText($this->style('Processing...'), ParseMode::MARKDOWN);
+        $this->verbose && $message->editText($this->style('Processing...'), ParseMode::MARKDOWN);
 
         $response = (function () use ($message, $count): string {
             try {
@@ -539,11 +539,12 @@ final class EventHandler extends SimpleEventHandler
                 return "Successfully deleted {$tmp} messages in {$diff}s!";
             } catch (\Throwable $e) {
                 $this->logger("Surfaced while deleting: $e");
+                // TODO: fix the collision with `style()`
                 return $this->fmtError('Check the logs');
             }
         })();
         try {
-            $message->editText($this->style($response), ParseMode::MARKDOWN);
+            $this->verbose && $message->editText($this->style($response), ParseMode::MARKDOWN);
         } catch (\Throwable) {
         }
     }
