@@ -510,8 +510,8 @@ final class EventHandler extends SimpleEventHandler
 
         $this->verbose && $message->editText($this->style('Processing...'), ParseMode::MARKDOWN);
 
-        $response = (function () use ($message, $count): string {
-            try {
+        try {
+            $response = (function () use ($message, $count): string {
                 $deleted = 0;
                 $start = now();
 
@@ -524,12 +524,12 @@ final class EventHandler extends SimpleEventHandler
                     unset($ids[$pos]);
                 }
                 if (\count($ids) === 0) {
-                    return 'No message to delete!';
+                    return "No message to delete!";
                 }
 
                 $deleted = $this->deleteMessages($message->chatId, $ids)['pts_count'];
                 if ($deleted === 0) {
-                    return 'Could not delete any message!';
+                    return "Could not delete any message!";
                 }
 
                 $end = now();
@@ -537,12 +537,12 @@ final class EventHandler extends SimpleEventHandler
 
                 $tmp = $deleted === $count ? $deleted : "{$deleted}/{$count}";
                 return "Successfully deleted {$tmp} messages in {$diff}s!";
-            } catch (\Throwable $e) {
-                $this->logger("Surfaced while deleting: $e");
-                // TODO: fix the collision with `style()`
-                return $this->fmtError('Check the logs');
-            }
-        })();
+            })();
+        } catch (\Throwable $e) {
+            $this->logger("Surfaced while deleting: $e");
+            $message->editText($this->fmtError('Check the logs'), ParseMode::MARKDOWN);
+            return;
+        }
         try {
             $this->verbose && $message->editText($this->style($response), ParseMode::MARKDOWN);
         } catch (\Throwable) {
