@@ -122,9 +122,9 @@ final class EventHandler extends SimpleEventHandler
             ? $message->editText($this->style($text), ParseMode::MARKDOWN)
             : $message->delete();
     }
-    public function respondError(Message $message, string $text): void
+    public function respondError(Message $message, \Throwable|string $e): void
     {
-        $message->reply($this->fmtError($text), ParseMode::MARKDOWN);
+        $message->reply($this->fmtError($e), ParseMode::MARKDOWN);
     }
 
     #[FilterCommand('help')]
@@ -331,7 +331,7 @@ final class EventHandler extends SimpleEventHandler
         try {
             $this->getInfo($peer);
         } catch (\Throwable $e) {
-            $this->respondError($message, "Invalid peer");
+            $this->respondError($message, $e);
             return;
         }
         $params = [
@@ -401,8 +401,8 @@ final class EventHandler extends SimpleEventHandler
                 if ($hasChat) {
                     $lines = \array_merge($lines, $prevLines);
                 }
-            } catch (\Throwable) {
-                $this->respondError($message, "Invalid user peer");
+            } catch (\Throwable $e) {
+                $this->respondError($message, $e);
                 return;
             }
         }
@@ -577,7 +577,7 @@ final class EventHandler extends SimpleEventHandler
             })();
         } catch (\Throwable $e) {
             $this->logger("Surfaced while deleting: $e");
-            $this->respondError($message, "Check the logs");
+            $this->respondError($message, $e);
             return;
         }
         try {
