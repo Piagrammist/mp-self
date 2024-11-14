@@ -321,7 +321,7 @@ final class EventHandler extends SimpleEventHandler
         if (!$this->active)
             return;
 
-        $this->loadingOrDelete($message);
+        $this->loading($message);
 
         $peer = $message->commandArgs[0] ?? $message->chatId;
         $replied = $message->getReply();
@@ -331,8 +331,6 @@ final class EventHandler extends SimpleEventHandler
         try {
             $this->getInfo($peer);
         } catch (\Throwable $e) {
-            // ! this will throw an error in quiet mode-
-            // !     since we've called `loadingOrDelete()` before.
             $this->respondError($message, "Invalid peer");
             return;
         }
@@ -343,7 +341,7 @@ final class EventHandler extends SimpleEventHandler
         if (!empty($replied->media))    $params['media']    = $replied->media;
         if (!empty($replied->entities)) $params['entities'] = $replied->entities;
         $this->messages->{!empty($replied->media) ? 'sendMedia' : 'sendMessage'}(...$params);
-        $this->respondIfVerbose($message, \sprintf(
+        $this->respondOrDelete($message, \sprintf(
             "Message copy sent to %s.",
             $peer === 'me' ? 'Saved Messages' : $peer,
         ));
@@ -548,7 +546,7 @@ final class EventHandler extends SimpleEventHandler
         if ($count < 1 || $count > 99)
             return;
 
-        $this->loadingOrDelete($message);
+        $this->loading($message);
         try {
             $response = (function () use ($message, $count): string {
                 $deleted = 0;
@@ -579,13 +577,11 @@ final class EventHandler extends SimpleEventHandler
             })();
         } catch (\Throwable $e) {
             $this->logger("Surfaced while deleting: $e");
-            // ! this will throw an error in quiet mode-
-            // !     since we've called `loadingOrDelete()` before.
             $this->respondError($message, "Check the logs");
             return;
         }
         try {
-            $this->respondIfVerbose($message, $response);
+            $this->respondOrDelete($message, $response);
         } catch (\Throwable) {
         }
     }
