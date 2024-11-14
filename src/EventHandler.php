@@ -98,6 +98,35 @@ final class EventHandler extends SimpleEventHandler
         return "*Error:*\n```\n$e```";
     }
 
+    public function loading(Message $message): void
+    {
+        $message->editText($this->style('Processing...'), ParseMode::MARKDOWN);
+    }
+    public function loadingOrDelete(Message $message): void
+    {
+        $this->verbose
+            ? $this->loading($message)
+            : $message->delete();
+    }
+    public function deleteIfQuiet(Message $message): void
+    {
+        $this->verbose || $message->delete();
+    }
+    public function respondIfVerbose(Message $message, string $text): void
+    {
+        $this->verbose && $message->editText($this->style($text), ParseMode::MARKDOWN);
+    }
+    public function respondOrDelete(Message $message, string $text): void
+    {
+        $this->verbose
+            ? $message->editText($this->style($text), ParseMode::MARKDOWN)
+            : $message->delete();
+    }
+    public function respondError(Message $message, string $text): void
+    {
+        $message->reply($this->fmtError($text), ParseMode::MARKDOWN);
+    }
+
     #[FilterCommand('help')]
     public function cmdHelp(FromAdminOrOutgoing&Message $message): void
     {
@@ -182,7 +211,7 @@ final class EventHandler extends SimpleEventHandler
         if (!$this->active)
             return;
 
-        $message->editText($this->style('Pong!'), ParseMode::MARKDOWN);
+        $this->respondOrDelete($message, 'Pong!');
     }
 
     #[FilterCommand('stop')]
@@ -191,7 +220,7 @@ final class EventHandler extends SimpleEventHandler
         if (!$this->active)
             return;
 
-        $this->verbose && $message->editText($this->style('Stopping...'), ParseMode::MARKDOWN);
+        $this->respondOrDelete($message, 'Stopping...');
         $this->stop();
     }
 
@@ -202,10 +231,10 @@ final class EventHandler extends SimpleEventHandler
             return;
 
         if (\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
-            $message->editText($this->fmtError('Restart not available on the CLI!'), ParseMode::MARKDOWN);
+            $this->respondError($message, "Restart not available on the CLI!");
             return;
         }
-        $this->verbose && $message->editText($this->style('Restarting...'), ParseMode::MARKDOWN);
+        $this->respondOrDelete($message, 'Restarting...');
         $this->restart();
     }
 
@@ -227,8 +256,10 @@ final class EventHandler extends SimpleEventHandler
                 : 'Robot is already inactive!';
             $this->active = false;
         }
-        if ($this->verbose && isset($res)) {
-            $message->editText($this->style($res), ParseMode::MARKDOWN);
+
+        $this->deleteIfQuiet($message);
+        if (isset($res)) {
+            $this->respondIfVerbose($message, $res);
         }
     }
 
@@ -252,8 +283,10 @@ final class EventHandler extends SimpleEventHandler
                 : 'Robot is already verbose!';
             $this->verbose = true;
         }
+
+        $this->deleteIfQuiet($message);
         if (isset($res)) {
-            $message->editText($this->style($res), ParseMode::MARKDOWN);
+            $this->respondIfVerbose($message, $res);
         }
     }
 
@@ -288,6 +321,8 @@ final class EventHandler extends SimpleEventHandler
         if (!$this->active)
             return;
 
+        $this->loadingOrDelete($message);
+
         $peer = $message->commandArgs[0] ?? $message->chatId;
         $replied = $message->getReply();
         if (!$replied) {
@@ -296,7 +331,9 @@ final class EventHandler extends SimpleEventHandler
         try {
             $this->getInfo($peer);
         } catch (\Throwable $e) {
-            $message->editText($this->fmtError("Invalid peer"), ParseMode::MARKDOWN);
+            // ! this will throw an error in quiet mode-
+            // !     since we've called `loadingOrDelete()` before.
+            $this->respondError($message, "Invalid peer");
             return;
         }
         $params = [
@@ -306,13 +343,10 @@ final class EventHandler extends SimpleEventHandler
         if (!empty($replied->media))    $params['media']    = $replied->media;
         if (!empty($replied->entities)) $params['entities'] = $replied->entities;
         $this->messages->{!empty($replied->media) ? 'sendMedia' : 'sendMessage'}(...$params);
-        $this->verbose && $message->editText(
-            $this->style(\sprintf(
-                "Message copy sent to %s.",
-                $peer === 'me' ? 'Saved Messages' : $peer,
-            )),
-            ParseMode::MARKDOWN,
-        );
+        $this->respondIfVerbose($message, \sprintf(
+            "Message copy sent to %s.",
+            $peer === 'me' ? 'Saved Messages' : $peer,
+        ));
     }
 
     #[FilterCommand('info')]
@@ -320,6 +354,8 @@ final class EventHandler extends SimpleEventHandler
     {
         if (!$this->active)
             return;
+
+        $this->loading($message);
 
         $empty = '—';
         $chat = $this->getInfo($message->chatId);
@@ -363,7 +399,7 @@ final class EventHandler extends SimpleEventHandler
                     $lines = \array_merge($lines, [\str_repeat('—', 13)], $lines);
                 }
             } catch (\Throwable) {
-                $message->editText($this->fmtError("Invalid user peer"), ParseMode::MARKDOWN);
+                $this->respondError($message, "Invalid user peer");
                 return;
             }
         }
@@ -377,8 +413,7 @@ final class EventHandler extends SimpleEventHandler
         if (!$this->active)
             return;
 
-        $message->editText($this->style('Processing...'), ParseMode::MARKDOWN);
-
+        $this->loading($message);
         $chats = [
             'bot' => 0,
             'user' => 0,
@@ -434,10 +469,10 @@ final class EventHandler extends SimpleEventHandler
             return;
 
         $this->styleChar = $newStyle === 'none' ? null : $newStyle;
-        $this->verbose && $message->editText(
-            $this->style('Successfully switched to ' . self::$allowedStyles[$newStyle] . ' text styling!'),
-            ParseMode::MARKDOWN,
-        );
+        $this->respondOrDelete($message, \sprintf(
+            "Successfully switched to %s text styling!",
+            self::$allowedStyles[$newStyle],
+        ));
     }
 
     #[FilterCommand('spell')]
@@ -454,8 +489,8 @@ final class EventHandler extends SimpleEventHandler
             \str_replace(
                 ' ',
                 '-',
-                \implode(' ', $message->commandArgs)
-            )
+                \implode(' ', $message->commandArgs),
+            ),
         );
         self::periodicAction($letters, static function ($letter) use ($message) {
             $message->sendText($letter);
@@ -508,8 +543,7 @@ final class EventHandler extends SimpleEventHandler
         if ($count < 1 || $count > 99)
             return;
 
-        $this->verbose && $message->editText($this->style('Processing...'), ParseMode::MARKDOWN);
-
+        $this->loadingOrDelete($message);
         try {
             $response = (function () use ($message, $count): string {
                 $deleted = 0;
@@ -540,11 +574,13 @@ final class EventHandler extends SimpleEventHandler
             })();
         } catch (\Throwable $e) {
             $this->logger("Surfaced while deleting: $e");
-            $message->editText($this->fmtError('Check the logs'), ParseMode::MARKDOWN);
+            // ! this will throw an error in quiet mode-
+            // !     since we've called `loadingOrDelete()` before.
+            $this->respondError($message, "Check the logs");
             return;
         }
         try {
-            $this->verbose && $message->editText($this->style($response), ParseMode::MARKDOWN);
+            $this->respondIfVerbose($message, $response);
         } catch (\Throwable) {
         }
     }
