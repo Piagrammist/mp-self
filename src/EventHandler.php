@@ -386,7 +386,12 @@ final class EventHandler extends SimpleEventHandler
                     isset($user['last_name']) ? " {$user['last_name']}" : ''
                 );
                 $username = isset($user['username']) ? "`{$user['username']}`" : $empty;
-                $hasChat = isset($lines);
+                if ($hasChat = isset($lines)) {
+                    $prevLines = [
+                        \str_repeat('—', 13),
+                        ...$lines,
+                    ];
+                }
                 $lines = [
                     "*User*",
                     $this->prefix(
@@ -396,7 +401,7 @@ final class EventHandler extends SimpleEventHandler
                     ),
                 ];
                 if ($hasChat) {
-                    $lines = \array_merge($lines, [\str_repeat('—', 13)], $lines);
+                    $lines = \array_merge($lines, $prevLines);
                 }
             } catch (\Throwable) {
                 $this->respondError($message, "Invalid user peer");
