@@ -98,20 +98,22 @@ final class EventHandler extends SimpleEventHandler
         return "*Error:*\n```\n$e```";
     }
 
-    public function loading(Message $message): void
+    public function loading(Message $message, ?string $customMessage = null): void
     {
-        $message->editText($this->style('Processing...'), ParseMode::MARKDOWN);
+        $message->editText($this->style($customMessage ?: 'Processing...'), ParseMode::MARKDOWN);
     }
-    public function loadingOrDelete(Message $message): void
+    public function loadingOrDelete(Message $message, ?string $customMessage = null): void
     {
         $this->verbose
-            ? $this->loading($message)
+            ? $this->loading($message, $customMessage)
             : $message->delete();
     }
+
     public function deleteIfQuiet(Message $message): void
     {
         $this->verbose || $message->delete();
     }
+
     public function respondIfVerbose(Message $message, string $text): void
     {
         $this->verbose && $message->editText($this->style($text), ParseMode::MARKDOWN);
@@ -197,10 +199,8 @@ final class EventHandler extends SimpleEventHandler
             '',
             \str_repeat('—', 13),
             "*Notes*",
-            $this->prefix(
-                "_Supported command prefixes are \"{$prefixes}\"_",
-                "_`()` means required reply, and `[]`, an optional one._",
-            ),
+            "- _Supported command prefixes are \"{$prefixes}\"_",
+            "- _`()` means required reply, and `[]`, an optional one._",
         );
         $message->editText($help, ParseMode::MARKDOWN);
     }
@@ -418,11 +418,11 @@ final class EventHandler extends SimpleEventHandler
 
         $this->loading($message);
         $chats = [
-            'bot' => 0,
             'user' => 0,
             'chat' => 0,
             'supergroup' => 0,
             'channel' => 0,
+            'bot' => 0,
         ];
         foreach ($this->getDialogIds() as $peer) {
             $chats[$this->getInfo($peer)['type']]++;
@@ -487,14 +487,7 @@ final class EventHandler extends SimpleEventHandler
             return;
 
         $message->delete(true);
-
-        $letters = \mb_str_split(
-            \str_replace(
-                ' ',
-                '-',
-                \implode(' ', $message->commandArgs),
-            ),
-        );
+        $letters = \mb_str_split(\str_replace(' ', '-', \implode(' ', $message->commandArgs)));
         self::periodicAction($letters, static function ($letter) use ($message) {
             $message->sendText($letter);
         });
@@ -521,8 +514,9 @@ final class EventHandler extends SimpleEventHandler
             return;
 
         $toSend = \str_repeat(
+            // Extract text depending if `y` is set or not.
             \trim(\implode(' ', \array_slice($args, isset($args[2]) ? 2 : 1))) . "\n",
-            $txtRepeat
+            $txtRepeat,
         );
         if (!$message->isReply()) {
             self::periodicAction($messageCount, function () use ($message, $toSend) {
