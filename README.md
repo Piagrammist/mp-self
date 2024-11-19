@@ -30,6 +30,9 @@ _Make the robot active or inactive._
 `.quiet <on|off>`
 _Switch the robot's quiet mode._
 
+`.delay <num_x>`
+_Change the periodic actions' delay._
+
 `.ping`
 _Check robot's responding._
 

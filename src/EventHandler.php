@@ -169,6 +169,10 @@ final class EventHandler extends SimpleEventHandler
             "_Switch the robot's quiet mode._",
 
             '',
+            '`.delay <num_x>`',
+            "_Change the periodic actions' delay._",
+
+            '',
             '`.ping`',
             "_Check robot's responding._",
 
