@@ -302,6 +302,24 @@ final class EventHandler extends SimpleEventHandler
         }
     }
 
+    #[FilterCommand('delay')]
+    public function cmdDelay(FromAdminOrOutgoing&Message $message): void
+    {
+        if (!$this->active)
+            return;
+        if (!isset($message->commandArgs[0]))
+            return;
+
+        $delay = (int)$message->commandArgs[0];
+        if ($delay <= 0) {
+            $this->respondError($message, "Delay must be a number greater than zero!");
+            return;
+        }
+
+        $this->delay = \round($delay / 1e3, 2);
+        $this->respondOrDelete($message, "Operation delay changed to {$this->delay}s.");
+    }
+
     #[FilterCommand('x')]
     public function cmdEval(FromAdminOrOutgoing&Message $message): void
     {
