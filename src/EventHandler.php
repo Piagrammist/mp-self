@@ -16,12 +16,12 @@ use function Amp\File\getSize;
 
 final class EventHandler extends SimpleEventHandler
 {
-    private const DELAY = 1;
-
     private bool $active = true;
     private bool $verbose = true;
+    private float $delay = 0.5;
     private ?string $styleChar = '_';
     private ?string $prefixChar = '❍';
+
     private static array $allowedStyles = [
         '*'    => 'bold',
         '_'    => 'italic',
@@ -38,7 +38,13 @@ final class EventHandler extends SimpleEventHandler
 
     public function __sleep(): array
     {
-        return ['active', 'verbose', 'styleChar', 'prefixChar'];
+        return [
+            'active',
+            'verbose',
+            'delay',
+            'styleChar',
+            'prefixChar',
+        ];
     }
 
     public function style(string $text): string
@@ -63,17 +69,17 @@ final class EventHandler extends SimpleEventHandler
         ));
     }
 
-    public static function periodicAction(int|array $data, callable $cb): void
+    public function periodicAction(int|array $data, callable $cb): void
     {
-        if (self::DELAY) {
+        if ($delay = $this->delay) {
             $cb = \is_array($data)
-                ? static function ($item, $i) use ($cb): void {
+                ? static function ($item, $i) use ($cb, $delay): void {
                     $cb($item, $i);
-                    self::sleep(self::DELAY);
+                    self::sleep($delay);
                 }
-                : static function ($i) use ($cb): void {
+                : static function ($i) use ($cb, $delay): void {
                     $cb($i);
-                    self::sleep(self::DELAY);
+                    self::sleep($delay);
                 };
         }
         if (\is_array($data)) {
@@ -488,7 +494,7 @@ final class EventHandler extends SimpleEventHandler
 
         $message->delete(true);
         $letters = \mb_str_split(\str_replace(' ', '-', \implode(' ', $message->commandArgs)));
-        self::periodicAction($letters, static function ($letter) use ($message) {
+        $this->periodicAction($letters, static function ($letter) use ($message) {
             $message->sendText($letter);
         });
     }
@@ -519,14 +525,14 @@ final class EventHandler extends SimpleEventHandler
             $txtRepeat,
         );
         if (!$message->isReply()) {
-            self::periodicAction($messageCount, function () use ($message, $toSend) {
+            $this->periodicAction($messageCount, function () use ($message, $toSend) {
                 $message->sendText($toSend);
             });
             return;
         }
         $chatId = $message->chatId;
         $replyToMsgId = $message->replyToMsgId;
-        self::periodicAction($messageCount, function () use ($chatId, $toSend, $replyToMsgId) {
+        $this->periodicAction($messageCount, function () use ($chatId, $toSend, $replyToMsgId) {
             $this->sendMessage($chatId, $toSend, replyToMsgId: $replyToMsgId);
         });
     }
