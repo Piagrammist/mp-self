@@ -5,6 +5,8 @@
         "madelineproto",
         "autoload",
         "supergroup",
+        "supergroups",
+        "endregion",
         "phpdbg",
     ],
 }

@@ -16,12 +16,6 @@ use function Amp\File\getSize;
 
 final class EventHandler extends SimpleEventHandler
 {
-    private bool $active = true;
-    private bool $verbose = true;
-    private float $delay = 0.5;
-    private ?string $styleChar = '_';
-    private ?string $prefixChar = '❍';
-
     private static array $allowedStyles = [
         '*'    => 'bold',
         '_'    => 'italic',
@@ -31,10 +25,13 @@ final class EventHandler extends SimpleEventHandler
         'none' => 'no',
     ];
 
-    public function getReportPeers(): array
-    {
-        return [ADMIN];
-    }
+
+    #region Properties
+    private bool $active = true;
+    private bool $verbose = true;
+    private float $delay = 0.5;
+    private ?string $styleChar = '_';
+    private ?string $prefixChar = '❍';
 
     public function __sleep(): array
     {
@@ -46,7 +43,10 @@ final class EventHandler extends SimpleEventHandler
             'prefixChar',
         ];
     }
+    #endregion
 
+
+    #region Utility Methods
     public function style(string $text): string
     {
         $style = $this->styleChar;
@@ -91,17 +91,20 @@ final class EventHandler extends SimpleEventHandler
         }
     }
 
+    public function fmtError(\Throwable|string $e): string
+    {
+        return "*Error:*\n```\n$e```";
+    }
+    #endregion
+
+
+    #region Tg Methods
     protected function deleteMessages(int $chatId, array $ids, bool $revoke = true): array
     {
         if (DialogId::isSupergroupOrChannel($chatId)) {
             return $this->channels->deleteMessages(channel: $chatId, id: $ids);
         }
         return $this->messages->deleteMessages(revoke: $revoke, id: $ids);
-    }
-
-    public function fmtError(\Throwable|string $e): string
-    {
-        return "*Error:*\n```\n$e```";
     }
 
     public function loading(Message $message, ?string $customMessage = null): void
@@ -134,7 +137,10 @@ final class EventHandler extends SimpleEventHandler
     {
         $message->reply($this->fmtError($e), ParseMode::MARKDOWN);
     }
+    #endregion
 
+
+    #region Commands
     #[FilterCommand('help')]
     public function cmdHelp(FromAdminOrOutgoing&Message $message): void
     {
@@ -584,5 +590,12 @@ final class EventHandler extends SimpleEventHandler
             $this->respondOrDelete($message, $response);
         } catch (\Throwable) {
         }
+    }
+    #endregion
+
+
+    public function getReportPeers(): array
+    {
+        return [ADMIN];
     }
 }
