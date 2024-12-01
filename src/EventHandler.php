@@ -570,38 +570,69 @@ final class EventHandler extends SimpleEventHandler
     {
         if (!$this->active)
             return;
-        $count = (int)($message->commandArgs[0] ?? 0);
-        if ($count < 1 || $count > 99)
+        $argOne = $message->commandArgs[0] ?? null;
+        $argTwo = (int)($message->commandArgs[1] ?? 0);
+        $serviceOnly = \in_array(\strtolower($argOne), ['s', 'service'], true);
+        $count = (int)$argOne;
+        if ($serviceOnly) {
+            if (!$argTwo)
+                return;
+
+            $count = $argTwo;
+        } elseif (!$count || ($count < 1 || $count > 99)) {
             return;
+        }
+        $offsetDate = $message->isReply()
+            ? $message->getReply()->date
+            : 0;
 
         $this->loading($message);
         try {
-            $response = (function () use ($message, $count): string {
+            $response = (function () use ($message, $count, $offsetDate, $serviceOnly): string {
                 $deleted = 0;
                 $start = now();
 
-                $messages = $this->messages->getHistory(
-                    peer: $message->chatId,
-                    limit: $count + 1,
-                )['messages'];
-                $ids = \array_column($messages, 'id');
-                if (($pos = \array_search($message->id, $ids, true)) !== false) {
-                    unset($ids[$pos]);
-                }
-                if (\count($ids) === 0) {
-                    return "No message to delete!";
+                while ($deleted < $count) {
+                    $history = $this->messages->getHistory(
+                        peer: $message->chatId,
+                        offset_date: $offsetDate,
+                        limit: $count + 1,
+                    )['messages'];
+                    if ($serviceOnly) {
+                        $history = \array_values(\array_filter($history,
+                            static fn($msg) => $msg['_'] === 'messageService'));
+                    }
+                    // Filter current topic messages.
+                    $history = \array_values(\array_filter(
+                        \array_map($this->wrapMessage(...), $history),
+                        static fn($msg) => $msg->topicId === $message->topicId));
+
+                    $ids = [];
+                    foreach ($history as $histMsg) {
+                        if ($histMsg->id !== $message->id) {
+                            $ids []= $histMsg->id;
+                        }
+                    }
+                    if (\count($ids) === 0)
+                        break;
+
+                    // Don't surpass the `count`.
+                    if (\count($ids) + $deleted > $count) {
+                        $ids = \array_slice($ids, 0, (int)($count - $deleted));
+                    }
+                    $deleted += $cycle = $this->deleteMessages($message->chatId, $ids)['pts_count'];
+                    if ($cycle === 0)
+                        break;
                 }
 
-                $deleted = $this->deleteMessages($message->chatId, $ids)['pts_count'];
-                if ($deleted === 0) {
+                if ($deleted === 0)
                     return "Could not delete any message!";
-                }
 
-                $end = now();
-                $diff = \round($end - $start, 2);
-
-                $tmp = $deleted === $count ? $deleted : "{$deleted}/{$count}";
-                return "Successfully deleted {$tmp} messages in {$diff}s!";
+                $diff = \round(now() - $start, 2);
+                return \sprintf("Successfully deleted %s messages in %ss.",
+                    $deleted === $count ? $deleted : "{$deleted}/{$count}",
+                    $diff,
+                );
             })();
         } catch (\Throwable $e) {
             $this->logger("Surfaced while deleting: $e");
