@@ -581,49 +581,57 @@ final class EventHandler extends SimpleEventHandler
                 return;
 
             $count = $argTwo;
-        } elseif (!$count || ($count < 1 || $count > 99)) {
+        } elseif ($count < 1) {
             return;
         }
         $offsetDate = $message->isReply()
             ? $message->getReply()->date
             : 0;
 
+        $counts = [];
+        while ($count > 0) {
+            $counts []= $count > 99 ? 99 : $count;
+            $count -= 99;
+        }
+
         $this->loading($message);
         try {
             $deleted = 0;
             $start = now();
 
-            while ($deleted < $count) {
-                $history = $this->messages->getHistory(
-                    peer: $message->chatId,
-                    offset_date: $offsetDate,
-                    limit: $count + 1,
-                )['messages'];
-                if ($serviceOnly) {
-                    $history = \array_values(\array_filter($history,
-                        static fn($msg) => $msg['_'] === 'messageService'));
-                }
-                // Filter current topic messages.
-                $history = \array_values(\array_filter(
-                    \array_map($this->wrapMessage(...), $history),
-                    static fn($msg) => $msg->topicId === $message->topicId));
-
-                $ids = [];
-                foreach ($history as $histMsg) {
-                    if ($histMsg->id !== $message->id) {
-                        $ids []= $histMsg->id;
+            foreach ($counts as $count) {
+                while ($deleted < $count) {
+                    $history = $this->messages->getHistory(
+                        peer: $message->chatId,
+                        offset_date: $offsetDate,
+                        limit: $count + 1,
+                    )['messages'];
+                    if ($serviceOnly) {
+                        $history = \array_values(\array_filter($history,
+                            static fn($msg) => $msg['_'] === 'messageService'));
                     }
-                }
-                if (\count($ids) === 0)
-                    break;
+                    // Filter current topic messages.
+                    $history = \array_values(\array_filter(
+                        \array_map($this->wrapMessage(...), $history),
+                        static fn($msg) => $msg->topicId === $message->topicId));
 
-                // Don't surpass the `count`.
-                if (\count($ids) + $deleted > $count) {
-                    $ids = \array_slice($ids, 0, (int)($count - $deleted));
+                    $ids = [];
+                    foreach ($history as $histMsg) {
+                        if ($histMsg->id !== $message->id) {
+                            $ids []= $histMsg->id;
+                        }
+                    }
+                    if (\count($ids) === 0)
+                        break 2;
+
+                    // Don't surpass the `count`.
+                    if (\count($ids) + $deleted > $count) {
+                        $ids = \array_slice($ids, 0, (int)($count - $deleted));
+                    }
+                    $deleted += $cycle = $this->deleteMessages($message->chatId, $ids)['pts_count'];
+                    if ($cycle === 0)
+                        break 2;
                 }
-                $deleted += $cycle = $this->deleteMessages($message->chatId, $ids)['pts_count'];
-                if ($cycle === 0)
-                    break;
             }
 
             if ($deleted === 0) {
