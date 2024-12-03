@@ -78,9 +78,9 @@ final class HelpPlugin extends PluginEventHandler
 
             '',
             '`.del <?s|service> <num_x> [reply]`',
-            '_Delete x messages from the chat. (0 < x < 100)_',
-            '_If 2nd arg is `service`, only the service messages will be deleted._',
-            '_If replied to a message, only messages before that will be deleted._',
+            '_Delete x messages from the chat._',
+            '_- If 2nd arg is `service`, only the service messages will be deleted._',
+            '_- If replied to a message, only messages before that will be deleted._',
 
             // '',
             // '``',

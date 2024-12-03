@@ -58,11 +58,11 @@ _Split text into letters and send them separately._
 _Send x messages, each containing y * txt. (y can be omitted!)_
 
 `.del <?s|service> <num_x> [reply]`
-_Delete x messages from the chat. (0 < x < 100)_
+_Delete x messages from the chat._
 
-> _If 1st arg is `service`, only the service messages will be deleted._
+> - _If 1st arg is `service`, only the service messages will be deleted._
 >
-> _If replied to a message, only messages before that will be deleted._
+> - _If replied to a message, only messages before that will be deleted._
 
 ---
 
