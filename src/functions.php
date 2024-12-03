@@ -35,6 +35,11 @@ function escape(array|string $chars, string $text): string
     return \str_replace($chars, $replacement, $text);
 }
 
+function fmtError(\Throwable|string $e): string
+{
+    return "*Error:*\n```\n$e```";
+}
+
 function concatLines(string ...$lines): string
 {
     return \implode("\n", $lines);
