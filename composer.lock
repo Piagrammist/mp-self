@@ -476,16 +476,16 @@
         },
         {
             "name": "amphp/http",
-            "version": "v2.1.1",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http.git",
-                "reference": "fe6b4dd50c1e70caf823092398074b5082e1d6da"
+                "reference": "3680d80bd38b5d6f3c2cef2214ca6dd6cef26588"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http/zipball/fe6b4dd50c1e70caf823092398074b5082e1d6da",
-                "reference": "fe6b4dd50c1e70caf823092398074b5082e1d6da",
+                "url": "https://api.github.com/repos/amphp/http/zipball/3680d80bd38b5d6f3c2cef2214ca6dd6cef26588",
+                "reference": "3680d80bd38b5d6f3c2cef2214ca6dd6cef26588",
                 "shasum": ""
             },
             "require": {
@@ -499,7 +499,7 @@
                 "amphp/php-cs-fixer-config": "^2",
                 "league/uri": "^6.8 | ^7.1",
                 "phpunit/phpunit": "^9",
-                "psalm/phar": "^5.4"
+                "psalm/phar": "^5.26.1"
             },
             "type": "library",
             "autoload": {
@@ -528,7 +528,7 @@
             "description": "Basic HTTP primitives which can be shared by servers and clients.",
             "support": {
                 "issues": "https://github.com/amphp/http/issues",
-                "source": "https://github.com/amphp/http/tree/v2.1.1"
+                "source": "https://github.com/amphp/http/tree/v2.1.2"
             },
             "funding": [
                 {
@@ -536,7 +536,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-03T18:00:53+00:00"
+            "time": "2024-11-23T14:57:26+00:00"
         },
         {
             "name": "amphp/http-client",
@@ -1166,16 +1166,16 @@
         },
         {
             "name": "amphp/postgres",
-            "version": "v2.1.0",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/postgres.git",
-                "reference": "48ee97e6899427f68d66c6319b778507e5f1abea"
+                "reference": "c62555c6497782399a166f15c8da8e64be456141"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/postgres/zipball/48ee97e6899427f68d66c6319b778507e5f1abea",
-                "reference": "48ee97e6899427f68d66c6319b778507e5f1abea",
+                "url": "https://api.github.com/repos/amphp/postgres/zipball/c62555c6497782399a166f15c8da8e64be456141",
+                "reference": "c62555c6497782399a166f15c8da8e64be456141",
                 "shasum": ""
             },
             "require": {
@@ -1226,7 +1226,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/postgres/issues",
-                "source": "https://github.com/amphp/postgres/tree/v2.1.0"
+                "source": "https://github.com/amphp/postgres/tree/v2.1.1"
             },
             "funding": [
                 {
@@ -1234,7 +1234,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-11T02:41:50+00:00"
+            "time": "2024-11-21T04:45:08+00:00"
         },
         {
             "name": "amphp/process",
@@ -1529,16 +1529,16 @@
         },
         {
             "name": "amphp/sql",
-            "version": "v2.0.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/sql.git",
-                "reference": "4cf80b477b5d40089ba2c162373a604e06d57d7b"
+                "reference": "2a7962dba23bf017bbdd3c3a0af0eb212481627b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/sql/zipball/4cf80b477b5d40089ba2c162373a604e06d57d7b",
-                "reference": "4cf80b477b5d40089ba2c162373a604e06d57d7b",
+                "url": "https://api.github.com/repos/amphp/sql/zipball/2a7962dba23bf017bbdd3c3a0af0eb212481627b",
+                "reference": "2a7962dba23bf017bbdd3c3a0af0eb212481627b",
                 "shasum": ""
             },
             "require": {
@@ -1571,7 +1571,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/sql/issues",
-                "source": "https://github.com/amphp/sql/tree/v2.0.0"
+                "source": "https://github.com/amphp/sql/tree/v2.0.1"
             },
             "funding": [
                 {
@@ -1579,7 +1579,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-10T15:03:32+00:00"
+            "time": "2024-11-23T16:16:34+00:00"
         },
         {
             "name": "amphp/sql-common",
@@ -2101,16 +2101,16 @@
         },
         {
             "name": "danog/dns-over-https",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/dns-over-https.git",
-                "reference": "8c4ac578b8c7231b6df91e03a28a4d807a636a93"
+                "reference": "142b8d439e7a582d66b13d9f1119820dd3110884"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/dns-over-https/zipball/8c4ac578b8c7231b6df91e03a28a4d807a636a93",
-                "reference": "8c4ac578b8c7231b6df91e03a28a4d807a636a93",
+                "url": "https://api.github.com/repos/danog/dns-over-https/zipball/142b8d439e7a582d66b13d9f1119820dd3110884",
+                "reference": "142b8d439e7a582d66b13d9f1119820dd3110884",
                 "shasum": ""
             },
             "require": {
@@ -2183,9 +2183,9 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/dns-over-https/issues",
-                "source": "https://github.com/danog/dns-over-https/tree/1.0.0"
+                "source": "https://github.com/danog/dns-over-https/tree/1.0.1"
             },
-            "time": "2023-12-14T20:00:28+00:00"
+            "time": "2024-12-02T16:42:09+00:00"
         },
         {
             "name": "danog/ipc",
@@ -2258,16 +2258,16 @@
         },
         {
             "name": "danog/libdns-json",
-            "version": "0.2.0",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/LibDNSJson.git",
-                "reference": "a49d7930943666b86eb9f33e8305376a724280b9"
+                "reference": "cd2981a386a32ff62d447a9553e203384651ba90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/LibDNSJson/zipball/a49d7930943666b86eb9f33e8305376a724280b9",
-                "reference": "a49d7930943666b86eb9f33e8305376a724280b9",
+                "url": "https://api.github.com/repos/danog/LibDNSJson/zipball/cd2981a386a32ff62d447a9553e203384651ba90",
+                "reference": "cd2981a386a32ff62d447a9553e203384651ba90",
                 "shasum": ""
             },
             "require": {
@@ -2313,9 +2313,9 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/LibDNSJson/issues",
-                "source": "https://github.com/danog/LibDNSJson/tree/0.2.0"
+                "source": "https://github.com/danog/LibDNSJson/tree/0.2.1"
             },
-            "time": "2022-12-05T21:13:49+00:00"
+            "time": "2024-12-02T16:40:37+00:00"
         },
         {
             "name": "danog/loop",
@@ -2380,16 +2380,16 @@
         },
         {
             "name": "danog/madelineproto",
-            "version": "8.3.5",
+            "version": "8.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/MadelineProto.git",
-                "reference": "1eb71f25ca6a9b53f11f9c1bece9fb25105e2a9f"
+                "reference": "642e62551b2c325f9ae1a15b9dcf18713e8a18ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/1eb71f25ca6a9b53f11f9c1bece9fb25105e2a9f",
-                "reference": "1eb71f25ca6a9b53f11f9c1bece9fb25105e2a9f",
+                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/642e62551b2c325f9ae1a15b9dcf18713e8a18ad",
+                "reference": "642e62551b2c325f9ae1a15b9dcf18713e8a18ad",
                 "shasum": ""
             },
             "require": {
@@ -2496,7 +2496,7 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/MadelineProto/issues",
-                "source": "https://github.com/danog/MadelineProto/tree/8.3.5"
+                "source": "https://github.com/danog/MadelineProto/tree/8.3.7"
             },
             "funding": [
                 {
@@ -2504,7 +2504,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-21T15:56:46+00:00"
+            "time": "2024-11-22T18:32:36+00:00"
         },
         {
             "name": "danog/primemodule",
@@ -3140,16 +3140,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "3.7.0",
+            "version": "3.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "f4393b648b78a5408747de94fca38beb5f7e9ef8"
+                "reference": "32e515fdc02cdafbe4593e30a9350d486b125b67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/f4393b648b78a5408747de94fca38beb5f7e9ef8",
-                "reference": "f4393b648b78a5408747de94fca38beb5f7e9ef8",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/32e515fdc02cdafbe4593e30a9350d486b125b67",
+                "reference": "32e515fdc02cdafbe4593e30a9350d486b125b67",
                 "shasum": ""
             },
             "require": {
@@ -3169,12 +3169,14 @@
                 "guzzlehttp/psr7": "^2.2",
                 "mongodb/mongodb": "^1.8",
                 "php-amqplib/php-amqplib": "~2.4 || ^3",
-                "phpstan/phpstan": "^1.9",
-                "phpstan/phpstan-deprecation-rules": "^1.0",
-                "phpstan/phpstan-strict-rules": "^1.4",
-                "phpunit/phpunit": "^10.5.17",
+                "php-console/php-console": "^3.1.8",
+                "phpstan/phpstan": "^2",
+                "phpstan/phpstan-deprecation-rules": "^2",
+                "phpstan/phpstan-strict-rules": "^2",
+                "phpunit/phpunit": "^10.5.17 || ^11.0.7",
                 "predis/predis": "^1.1 || ^2",
-                "ruflin/elastica": "^7",
+                "rollbar/rollbar": "^4.0",
+                "ruflin/elastica": "^7 || ^8",
                 "symfony/mailer": "^5.4 || ^6",
                 "symfony/mime": "^5.4 || ^6"
             },
@@ -3225,7 +3227,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/3.7.0"
+                "source": "https://github.com/Seldaek/monolog/tree/3.8.0"
             },
             "funding": [
                 {
@@ -3237,7 +3239,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-06-28T09:40:51+00:00"
+            "time": "2024-11-12T13:57:08+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -3526,16 +3528,16 @@
         },
         {
             "name": "promphp/prometheus_client_php",
-            "version": "v2.12.0",
+            "version": "v2.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PromPHP/prometheus_client_php.git",
-                "reference": "50b70a6df4017081917e004f177a3c01cc8115db"
+                "reference": "abe6bbb198ba83a306c45c9872c8f386dc323e91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PromPHP/prometheus_client_php/zipball/50b70a6df4017081917e004f177a3c01cc8115db",
-                "reference": "50b70a6df4017081917e004f177a3c01cc8115db",
+                "url": "https://api.github.com/repos/PromPHP/prometheus_client_php/zipball/abe6bbb198ba83a306c45c9872c8f386dc323e91",
+                "reference": "abe6bbb198ba83a306c45c9872c8f386dc323e91",
                 "shasum": ""
             },
             "require": {
@@ -3588,9 +3590,9 @@
             "description": "Prometheus instrumentation library for PHP applications.",
             "support": {
                 "issues": "https://github.com/PromPHP/prometheus_client_php/issues",
-                "source": "https://github.com/PromPHP/prometheus_client_php/tree/v2.12.0"
+                "source": "https://github.com/PromPHP/prometheus_client_php/tree/v2.13.0"
             },
-            "time": "2024-10-18T07:33:22+00:00"
+            "time": "2024-12-02T12:27:42+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -3964,10 +3966,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
