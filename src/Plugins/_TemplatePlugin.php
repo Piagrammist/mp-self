@@ -12,7 +12,7 @@ use danog\MadelineProto\EventHandler\SimpleFilter\FromAdminOrOutgoing;
 use Rz\Utils;
 use Rz\Filters\FilterActive;
 
-final class BasePlugin extends PluginEventHandler
+final class _TemplatePlugin extends PluginEventHandler
 {
     use Utils;
 
