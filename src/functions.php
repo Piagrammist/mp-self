@@ -35,6 +35,11 @@ function escape(array|string $chars, string $text): string
     return \str_replace($chars, $replacement, $text);
 }
 
+function fmtBool(bool $switch): string
+{
+    return $switch ? '✓' : '✗';
+}
+
 function fmtError(\Throwable|string $e): string
 {
     return "*Error:*\n```\n$e```";

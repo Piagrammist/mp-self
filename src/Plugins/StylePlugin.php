@@ -65,4 +65,15 @@ final class StylePlugin extends PluginEventHandler
     {
         return \array_key_exists($char, self::$allowedStyles);
     }
+
+    public static function nameOf(string $char): string
+    {
+        if ($char === null)
+            $char = 'none';
+
+        if (!isset(self::$allowedStyles[$char]))
+            throw new \InvalidArgumentException('Invalid style character provided');
+
+        return self::$allowedStyles[$char];
+    }
 }

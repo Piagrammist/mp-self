@@ -10,6 +10,7 @@ use Rz\Plugins\DelayPlugin;
 use Rz\Plugins\StylePlugin;
 use Rz\Plugins\PrefixPlugin;
 use Rz\Plugins\VerbosityPlugin;
+use Rz\Plugins\ActivationPlugin;
 
 trait Utils
 {
@@ -96,19 +97,23 @@ trait Utils
         }
     }
 
-    private function isVerbose(): bool
+    protected function isActive(): bool
+    {
+        return $this->getPlugin(ActivationPlugin::class)->getActive();
+    }
+    protected function isVerbose(): bool
     {
         return $this->getPlugin(VerbosityPlugin::class)->getVerbose();
     }
-    private function getStyle(): string
+    protected function getStyle(): string
     {
         return $this->getPlugin(StylePlugin::class)->getStyle();
     }
-    private function getPrefix(): string
+    protected function getPrefix(): string
     {
         return $this->getPlugin(PrefixPlugin::class)->getPrefix();
     }
-    private function getDelay(): float
+    protected function getDelay(): float
     {
         return $this->getPlugin(DelayPlugin::class)->getDelay();
     }
