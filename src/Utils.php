@@ -51,7 +51,7 @@ trait Utils
     }
     public function respondError(Message $message, \Throwable|string $e): void
     {
-        $message->reply(fmtError($e), ParseMode::MARKDOWN);
+        $message->reply(Fmt::error($e), ParseMode::MARKDOWN);
     }
 
     public function style(string $text): string

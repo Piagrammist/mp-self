@@ -10,9 +10,9 @@ use danog\MadelineProto\EventHandler\Filter\FilterCommand;
 use danog\MadelineProto\EventHandler\Filter\Combinator\FiltersAnd;
 use danog\MadelineProto\EventHandler\SimpleFilter\FromAdminOrOutgoing;
 
+use Rz\Fmt;
 use Rz\Utils;
 use Rz\Filters\FilterActive;
-use function Rz\fmtBool;
 use function Rz\concatLines;
 use function Rz\readableBytes;
 
@@ -52,11 +52,11 @@ final class StatusPlugin extends PluginEventHandler
             concatLines(
                 "*Robot*",
                 $this->prefix(
-                    \sprintf("_Active: %s_", fmtBool( $this->isActive())),
-                    \sprintf("_Quiet: %s_",  fmtBool(!$this->isVerbose())),
-                    \sprintf("_Operation delay: %s_", $this->getDelay()),
-                    \sprintf("_Prefix char: %s_",     $this->getPrefix()),
-                    \sprintf("_Text styling: %s_",    StylePlugin::nameOf($this->getStyle())),
+                    \sprintf("_Active: %s_", Fmt::bool( $this->isActive())),
+                    \sprintf("_Quiet: %s_",  Fmt::bool(!$this->isVerbose())),
+                    \sprintf("_Operation delay: %s_",   $this->getDelay()),
+                    \sprintf("_Prefix char: %s_",       $this->getPrefix()),
+                    \sprintf("_Text styling: %s_", StylePlugin::nameOf($this->getStyle())),
                 ),
                 \str_repeat('—', 13),
 

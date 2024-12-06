@@ -35,14 +35,13 @@ function escape(array|string $chars, string $text): string
     return \str_replace($chars, $replacement, $text);
 }
 
-function fmtBool(bool $switch): string
+function toJSON($value): string
 {
-    return $switch ? '✓' : '✗';
-}
-
-function fmtError(\Throwable|string $e): string
-{
-    return "*Error:*\n```\n$e```";
+    return \json_encode($value,
+            JSON_UNESCAPED_SLASHES |
+            JSON_UNESCAPED_UNICODE |
+            JSON_PRETTY_PRINT
+        );
 }
 
 function concatLines(string ...$lines): string
