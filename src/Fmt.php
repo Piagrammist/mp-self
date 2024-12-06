@@ -6,12 +6,15 @@ final class Fmt
 {
     public static function json($value): string
     {
-        return "```json\n" . toJSON($value) . "```";
+        return \sprintf("```json\n%s```", escape('```', toJSON($value)));
     }
 
     public static function error(\Throwable|string $e): string
     {
-        return "*Error:*\n```\n$e```";
+        if ($e instanceof \Throwable) {
+            $e = $e->getMessage();
+        }
+        return \sprintf("*Error:*\n```\n%s```", escape('```', $e));
     }
 
     public static function bool(bool $switch): string

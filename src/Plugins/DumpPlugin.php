@@ -24,11 +24,9 @@ final class DumpPlugin extends PluginEventHandler
             return;
 
         try {
-            $response = Fmt::json($repliedTo);
+            $message->reply(Fmt::json($repliedTo), ParseMode::MARKDOWN);
         } catch (\Throwable $e) {
-            $response = Fmt::error($e);
-        } finally {
-            $message->editText($response, ParseMode::MARKDOWN);
+            $this->respondError($message, $e);
         }
     }
 }
