@@ -23,17 +23,22 @@ final class EvalPlugin extends PluginEventHandler
         if (!isset($message->commandArgs[0]))
             return;
 
-        //!  change the class name[space] if needed.
-        $code = "use Rz\Fmt;\n" . \mb_substr($message->message, 2);
+        $code = \sprintf("use %s;\n", Fmt::class) . \implode(' ', $message->commandArgs);
         try {
             \ob_start();
             eval($code);
             $output = \ob_get_clean();
             $output = $output ? "*Result:*\n$output" : $this->style("No output.");
-        } catch (\Throwable $e) {
-            $output = Fmt::error($e);
-        } finally {
             $message->reply($output, ParseMode::MARKDOWN);
+        } catch (\Throwable $e) {
+            if (\ob_get_length()) {
+                \ob_end_clean();
+            }
+            if ($e->getMessage() === 'MESSAGE_EMPTY' && \strlen($output) > 0) {
+                $this->respondError($message, "Invalid output characters!");
+                return;
+            }
+            $this->respondError($message, $e);
         }
     }
 }
