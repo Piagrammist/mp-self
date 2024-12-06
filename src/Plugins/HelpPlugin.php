@@ -10,12 +10,15 @@ use danog\MadelineProto\EventHandler\Filter\FilterCommand;
 use danog\MadelineProto\EventHandler\Filter\Combinator\FiltersAnd;
 use danog\MadelineProto\EventHandler\SimpleFilter\FromAdminOrOutgoing;
 
+use Rz\Utils;
 use Rz\Filters\FilterActive;
 use function Rz\escape;
 use function Rz\concatLines;
 
 final class HelpPlugin extends PluginEventHandler
 {
+    use Utils;
+
     #[FiltersAnd(new FilterActive, new FilterCommand('help'))]
     public function process(FromAdminOrOutgoing&Message $message): void
     {
@@ -82,6 +85,10 @@ final class HelpPlugin extends PluginEventHandler
             '_- If 2nd arg is `service`, only the service messages will be deleted._',
             '_- If replied to a message, only messages before that will be deleted._',
 
+            '',
+            '`{} (reply)`',
+            "_Get JSON view of the replied message update._",
+
             // '',
             // '``',
             // '__',
@@ -89,8 +96,10 @@ final class HelpPlugin extends PluginEventHandler
             '',
             \str_repeat('—', 13),
             "*Notes*",
-            "- _Supported command prefixes are \"{$prefixes}\"_",
-            "- _`()` means required reply, and `[]`, an optional one._",
+            $this->prefix(
+                "_Supported command prefixes are \"{$prefixes}\"_",
+                "_`()` means required reply, and `[]`, an optional one._",
+            ),
         );
         $message->editText($help, ParseMode::MARKDOWN);
     }

@@ -64,6 +64,9 @@ _Delete x messages from the chat._
 >
 > - _If replied to a message, only messages before that will be deleted._
 
+`{} (reply)`
+_Get JSON view of the replied message update._
+
 ---
 
 > [!NOTE]
