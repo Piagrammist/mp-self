@@ -45,7 +45,7 @@ final class DelayPlugin extends PluginEventHandler
     public function setDelay(float $delay): self
     {
         if (!self::validateDelay($delay)) {
-            throw new \RangeException('Delay must be greater than zero');
+            throw new \RangeException('Delay must not be a negative number');
         }
         $this->delay = $delay;
         return $this;
