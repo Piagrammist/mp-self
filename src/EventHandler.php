@@ -18,6 +18,7 @@ final class EventHandler extends SimpleEventHandler
             Plugins\ActivationPlugin::class,
             Plugins\BasicsPlugin::class,
             Plugins\CleanerPlugin::class,
+            Plugins\ClonePlugin::class,
             Plugins\CopyPlugin::class,
             Plugins\DelayPlugin::class,
             Plugins\DumpPlugin::class,
