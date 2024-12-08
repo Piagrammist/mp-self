@@ -86,6 +86,18 @@ final class HelpPlugin extends PluginEventHandler
             '_- If replied to a message, only messages before that will be deleted._',
 
             '',
+            '`.backup <?c|clear>`',
+            '_Make a profile backup, or delete the previous one._',
+
+            '',
+            '`.restore`',
+            '_Restore the profile backup if exists._',
+
+            '',
+            '`.clone (reply)`',
+            '_Clone profile of the replied user._',
+
+            '',
             '`{} (reply)`',
             "_Get JSON view of the replied message update._",
 

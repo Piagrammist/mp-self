@@ -53,6 +53,7 @@ final class ClonePlugin extends PluginEventHandler
     #[FiltersAnd(new FilterActive, new FilterCommand('clone'))]
     public function processClone(FromAdminOrOutgoing&Message $message): void
     {
+        // TODO: add support for peer arg (e.g. `.clone @test`)
         if (!($repliedTo = $message->getReply()))
             return;
 

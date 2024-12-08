@@ -64,6 +64,15 @@ _Delete x messages from the chat._
 >
 > - _If replied to a message, only messages before that will be deleted._
 
+`.backup <?c|clear>`
+_Make a profile backup, or delete the previous one._
+
+`.restore`
+_Restore the profile backup if it exists._
+
+`.clone (reply)`
+_Clone profile of the replied user._
+
 `{} (reply)`
 _Get JSON view of the replied message update._
 
