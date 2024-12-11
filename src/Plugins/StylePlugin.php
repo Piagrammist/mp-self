@@ -54,9 +54,9 @@ final class StylePlugin extends PluginEventHandler
     }
     public function setStyle(string $char): self
     {
-        if (!self::validateStyle($char)) {
+        if (!self::validateStyle($char))
             throw new \InvalidArgumentException('Invalid style character provided');
-        }
+
         $this->styleChar = $char;
         return $this;
     }
@@ -66,10 +66,10 @@ final class StylePlugin extends PluginEventHandler
         return \array_key_exists($char, self::$allowedStyles);
     }
 
-    public static function nameOf(string $char): string
+    public static function nameOf(?string $char): string
     {
-        if ($char === null)
-            $char = 'none';
+        if (!$char || $char === 'none')
+            return 'none';
 
         if (!isset(self::$allowedStyles[$char]))
             throw new \InvalidArgumentException('Invalid style character provided');
