@@ -43,7 +43,8 @@ final class ClonePlugin extends PluginEventHandler
             return;
         }
 
-        $this->updateProfile($this->getBackup());
+        $this->updateProfile($this->getBackup(), $message);
+        // TODO: check if updating was actually successful.
         $this->respondOrDelete($message, \sprintf(
             'Backup from "%s" restored successfully.',
             \date('j/n H:i', $this->backupTime),
@@ -53,44 +54,57 @@ final class ClonePlugin extends PluginEventHandler
     #[FiltersAnd(new FilterActive, new FilterCommand('clone'))]
     public function processClone(FromAdminOrOutgoing&Message $message): void
     {
-        // TODO: add support for peer arg (e.g. `.clone @test`)
-        if (!($repliedTo = $message->getReply()))
-            return;
+        $peer = $message->commandArgs[0] ?? null;
 
-        $this->setBackup($this->fetchProfile('me'));
-        $this->updateProfile(
-            $this->fetchProfile($repliedTo->senderId)
-        );
+        if ($peer) {
+            try {
+                $id = $this->getId($peer);
+            } catch (\Throwable $e) {
+                $this->respondError($message, $e);
+                return;
+            }
+        } elseif ($id = $message->getReply()?->senderId) {
+        } else {
+            return;
+        }
+
+        // $this->setBackup($this->fetchProfile('me'));
+        $this->updateProfile($this->fetchProfile($id), $message);
+        // TODO: check if updating was actually successful.
         $this->respondOrDelete($message, "User profile cloned successfully.");
     }
 
-    public function updateProfile(array $profile): void
+    public function updateProfile(array $profile, Message $message): void
     {
         $profile = self::filterProfile($profile);
         if ($profile['birthday']) {
-            $this->account->updateBirthday(birthday: $profile['birthday']);
+            $this->catchFlood($message, 'account.updateBirthday',
+                fn() => $this->account->updateBirthday(birthday: $profile['birthday']),
+            );
         }
         // if ($profile['photo']) {
         //     $this->account->updateProfile();
         // }
         unset($profile['birthday']/*, $profile['photo']*/);
-        $this->account->updateProfile(...\array_filter($profile));
+        $this->catchFlood($message, 'account.updateProfile',
+            fn() => $this->account->updateProfile(...\array_filter($profile)),
+        );
     }
 
     public function fetchProfile($peer): array
     {
         $info = $this->getFullInfo($peer);
-        $user = $info['User'];
+        $chat = $info['User'] ?? $info['Chat'];
         $full = $info['full'];
 
-        unset($user['photo']['personal']);
+        unset($chat['photo']['personal']);
 
         return [
-            'first_name' => $user['first_name'],
-            'last_name'  => $user['last_name']  ?? null,
+            'first_name' => $chat['first_name'] ?? $chat['title'],
+            'last_name'  => $chat['last_name']  ?? null,
             'about'      => $full['about']      ?? null,
             'birthday'   => $full['birthday']   ?? null,
-            'photo'      => $user['photo'],
+            'photo'      => $chat['photo'],
         ];
     }
 
