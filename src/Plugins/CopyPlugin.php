@@ -18,13 +18,16 @@ final class CopyPlugin extends PluginEventHandler
     #[FiltersAnd(new FilterActive, new FilterCommand('cp'))]
     public function process(FromAdminOrOutgoing&Message $message): void
     {
-        $this->loading($message);
-
-        $peer = $message->commandArgs[0] ?? $message->chatId;
+        $peer    = $message->commandArgs[0] ?? $message->chatId;
         $replied = $message->getReply();
-        if (!$replied) {
+        if (!$replied)
+            return;
+        if (!$replied instanceof Message) {
+            $this->respondError($message, "Replied message is not copyable!");
             return;
         }
+
+        $this->loading($message);
         try {
             $this->getInfo($peer);
         } catch (\Throwable $e) {
