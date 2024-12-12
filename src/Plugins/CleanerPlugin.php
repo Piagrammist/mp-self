@@ -20,40 +20,38 @@ final class CleanerPlugin extends PluginEventHandler
     #[FiltersAnd(new FilterActive, new FilterCommand('del'))]
     public function process(FromAdminOrOutgoing&Message $message): void
     {
-        $argOne = $message->commandArgs[0] ?? null;
-        $argTwo = (int)($message->commandArgs[1] ?? 0);
-        $serviceOnly = \in_array(\strtolower($argOne), ['s', 'service'], true);
-        $count = (int)$argOne;
-        if ($serviceOnly) {
-            if (!$argTwo)
-                return;
-
-            $count = $argTwo;
-        } elseif ($count < 1) {
+        $count = (int)($message->commandArgs[0] ?? 0);
+        if ($count < 1)
             return;
-        }
+        $argTwo   = \strtolower($message->commandArgs[1] ?? '');
+        $argThree = \strtolower($message->commandArgs[2] ?? '');
+
+        $after   = ['a', 'aft', 'after'];
+        $service = ['s', 'ser', 'service'];
+        $afterReply  = \in_array($argTwo, $after,   true) || \in_array($argThree, $after,   true);
+        $serviceOnly = \in_array($argTwo, $service, true) || \in_array($argThree, $service, true);
+        unset($argTwo, $argThree, $after, $service);
 
         $this->loading($message);
 
-        $counts = [];
+        $chunks = [];
         while ($count > 0) {
-            $counts []= $count > 99 ? 99 : $count;
+            $chunks []= $count > 99 ? 99 : $count;
             $count -= 99;
         }
-        $offsetDate = $message->isReply()
-            ? $message->getReply()->date
-            : 0;
+
+        $params = [
+            'peer' => $message->chatId,
+            $afterReply ? 'min_id' : 'max_id' => (int)$message->getReply()?->id,
+        ];
         try {
             $deleted = 0;
             $start = now();
 
-            foreach ($counts as $count) {
+            foreach ($chunks as $count) {
                 while ($deleted < $count) {
-                    $history = $this->messages->getHistory(
-                        peer: $message->chatId,
-                        offset_date: $offsetDate,
-                        limit: $count + 1,
-                    )['messages'];
+                    $params['limit'] = $count + 1;
+                    $history = $this->messages->getHistory(...$params)['messages'];
                     if ($serviceOnly) {
                         $history = \array_values(\array_filter($history,
                             static fn($msg) => $msg['_'] === 'messageService'));
@@ -74,7 +72,9 @@ final class CleanerPlugin extends PluginEventHandler
 
                     // Don't surpass the `count`.
                     if (\count($ids) + $deleted > $count) {
-                        $ids = \array_slice($ids, 0, (int)($count - $deleted));
+                        /** @var int */
+                        $length = $count - $deleted;
+                        $ids = \array_slice($ids, 0, $length);
                     }
                     $deleted += $cycle = $this->deleteMessages($message->chatId, $ids)['pts_count'];
                     if ($cycle === 0)
