@@ -57,12 +57,12 @@ _Split text into letters and send them separately._
 `.spam <num_x> <?num_y> <txt>`
 _Send x messages, each containing y * txt. (y can be omitted!)_
 
-`.del <?s|service> <num_x> [reply]`
+`.del <num_x> <?s|service> <?a|after> [reply]`
 _Delete x messages from the chat._
 
-> - _If 1st arg is `service`, only the service messages will be deleted._
+> - _If `service` is set, only service messages will be deleted._
 >
-> - _If replied to a message, only messages before that will be deleted._
+> - _If replied to a message, only messages before (after, if set) the replied message will be deleted._
 
 `.backup <?c|clear>`
 _Make a profile backup, or delete the previous one._
