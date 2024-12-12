@@ -5,6 +5,7 @@ namespace Rz;
 use danog\DialogId\DialogId;
 use danog\MadelineProto\ParseMode;
 use danog\MadelineProto\EventHandler\Message;
+use danog\MadelineProto\RPCError\FloodWaitError;
 
 use Rz\Plugins\DelayPlugin;
 use Rz\Plugins\StylePlugin;
@@ -52,6 +53,15 @@ trait Utils
     public function respondError(Message $message, \Throwable|string $e): void
     {
         $message->reply(Fmt::error($e), ParseMode::MARKDOWN);
+    }
+
+    public function catchFlood(Message $message, string $method, callable $cb): void
+    {
+        try {
+            $cb();
+        } catch (FloodWaitError $e) {
+            $this->respondError($message, "$method: FLOOD_WAIT_{$e->getWaitTime()}");
+        }
     }
 
     public function style(string $text): string
