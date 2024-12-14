@@ -20,8 +20,8 @@ final class CleanerPlugin extends PluginEventHandler
     #[FiltersAnd(new FilterActive, new FilterCommand('del'))]
     public function process(FromAdminOrOutgoing&Message $message): void
     {
-        $count = (int)($message->commandArgs[0] ?? 0);
-        if ($count < 1)
+        $total = (int)($message->commandArgs[0] ?? 0);
+        if ($total < 1)
             return;
         $argTwo   = \strtolower($message->commandArgs[1] ?? '');
         $argThree = \strtolower($message->commandArgs[2] ?? '');
@@ -35,59 +35,57 @@ final class CleanerPlugin extends PluginEventHandler
         $this->loading($message);
 
         $chunks = [];
-        while ($count > 0) {
-            $chunks []= $count > 99 ? 99 : $count;
-            $count -= 99;
+        for ($c = $total; $c > 0; $c -= 99) {
+            $chunks []= $c > 99 ? 99 : $c;
         }
 
         $params = [
-            'peer' => $message->chatId,
-            $afterReply ? 'min_id' : 'max_id' => (int)$message->getReply()?->id,
+            'peer'   => $message->chatId,
+            'max_id' => $message->id,
         ];
+        if ($message->isReply())
+            $params[$afterReply ? 'min_id' : 'max_id'] = $message->getReply()->id;
+
         try {
             $deleted = 0;
+            $toBreak = false;
             $start = now();
 
-            foreach ($chunks as $count) {
-                while ($deleted < $count) {
-                    $params['limit'] = $count + 1;
-                    $history = $this->messages->getHistory(...$params)['messages'];
-                    if ($serviceOnly) {
-                        $history = \array_values(\array_filter($history,
-                            static fn($msg) => $msg['_'] === 'messageService'));
-                    }
-                    // Filter current topic messages.
-                    $history = \array_values(\array_filter(
-                        \array_map($this->wrapMessage(...), $history),
-                        static fn($msg) => $msg->topicId === $message->topicId));
-
-                    $ids = [];
-                    foreach ($history as $histMsg) {
-                        if ($histMsg->id !== $message->id) {
-                            $ids []= $histMsg->id;
-                        }
-                    }
-                    if (\count($ids) === 0)
-                        break 2;
-
-                    // Don't surpass the `count`.
-                    if (\count($ids) + $deleted > $count) {
-                        /** @var int */
-                        $length = $count - $deleted;
-                        $ids = \array_slice($ids, 0, $length);
-                    }
-                    $deleted += $cycle = $this->deleteMessages($message->chatId, $ids)['pts_count'];
-                    if ($cycle === 0)
-                        break 2;
+            foreach ($chunks as $limit) {
+                $params['limit'] = $limit + 1;
+                $history = $this->messages->getHistory(...$params)['messages'];
+                if ($serviceOnly) {
+                    $history = \array_values(\array_filter($history,
+                        static fn($msg) => $msg['_'] === 'messageService'));
                 }
+                // Filter current topic messages.
+                $history = \array_values(\array_filter(
+                    \array_map($this->wrapMessage(...), $history),
+                    static fn($msg) => $msg->topicId === $message->topicId,
+                ));
+
+                $ids = \array_column($history, 'id');
+                if (\count($ids) === 0)
+                    break;
+
+                // Don't surpass the `total` number.
+                if (\count($ids) + $deleted > $total) {
+                    /** @var int */
+                    $length = $total - $deleted;
+                    $ids = \array_slice($ids, 0, $length);
+                    $toBreak = true;
+                }
+                $deleted += $cycle = $this->deleteMessages($message->chatId, $ids)['pts_count'];
+                if ($cycle === 0 || $toBreak)
+                    break;
             }
 
             if ($deleted === 0) {
                 $response = "Could not delete any message!";
             } else {
                 $diff = \round(now() - $start, 2);
-                $response = \sprintf("Successfully deleted %s messages in %ss.",
-                    $deleted === $count ? $deleted : "{$deleted}/{$count}",
+                $response = \sprintf("Managed to delete %s messages in %ss.",
+                    $deleted === $total ? $deleted : "{$deleted}/{$total}",
                     $diff,
                 );
             }
