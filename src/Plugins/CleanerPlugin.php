@@ -43,8 +43,14 @@ final class CleanerPlugin extends PluginEventHandler
             'peer'   => $message->chatId,
             'max_id' => $message->id,
         ];
-        if ($message->isReply())
-            $params[$afterReply ? 'min_id' : 'max_id'] = $message->getReply()->id;
+        if ($message->isReply()) {
+            $replyId = $message->getReply()->id;
+
+            if ($afterReply)
+                $params['min_id'] = $replyId - 1;
+            else
+                $params['offset_id'] = $replyId + 1;
+        }
 
         try {
             $deleted = 0;
