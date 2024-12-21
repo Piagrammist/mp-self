@@ -8,7 +8,7 @@ enum GroupedStatus: string
     case PARTIAL = 'partial';
     case SUCCESS = 'success';
 
-    public static function from(bool ...$states): self
+    public static function fromStates(?bool ...$states): self
     {
         $sum = \array_sum($states);
 

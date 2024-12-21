@@ -202,7 +202,7 @@ final class ClonePlugin extends PluginEventHandler
      */
     private function genUpdateResponse(array $updateStates, array $titles): string
     {
-        $state = GroupedStatus::from(...$updateStates);
+        $state = GroupedStatus::fromStates(...$updateStates);
 
         if (empty($titles[$state->value])) {
             throw new \InvalidArgumentException(
