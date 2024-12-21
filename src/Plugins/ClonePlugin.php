@@ -45,7 +45,7 @@ final class ClonePlugin extends PluginEventHandler
             return;
         }
 
-        $date     = \date('j/n H:i', $this->backupTime);
+        $date     = \date('n/j H:i', $this->backupTime);
         $states   = $this->updateProfile($this->getBackup(), $message);
         $response = $this->genUpdateResponse($states, \array_map(
             static fn($text) => \sprintf($text, $date),
@@ -79,9 +79,9 @@ final class ClonePlugin extends PluginEventHandler
 
         $states   = $this->updateProfile($this->fetchProfile($id), $message);
         $response = $this->genUpdateResponse($states, [
-            'success' => "User profile cloned successfully.",
-            'partial' => "Managed to clone user profile partially.",
-            'fail'    => "Failed to clone user profile!",
+            'success' => "Profile cloned successfully.",
+            'partial' => "Managed to clone profile partially.",
+            'fail'    => "Failed to clone profile!",
         ]);
         $this->respondOrDelete($message, $response, false);
     }
