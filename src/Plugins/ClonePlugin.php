@@ -61,9 +61,7 @@ final class ClonePlugin extends PluginEventHandler
     #[FiltersAnd(new FilterActive, new FilterCommand('clone'))]
     public function processClone(FromAdminOrOutgoing&Message $message): void
     {
-        $peer = $message->commandArgs[0] ?? null;
-
-        if ($peer) {
+        if ($peer = $message->commandArgs[0] ?? null) {
             try {
                 $id = $this->getId($peer);
             } catch (\Throwable $e) {
@@ -72,7 +70,7 @@ final class ClonePlugin extends PluginEventHandler
             }
         } elseif ($id = $message->getReply()?->senderId) {
         } else {
-            $peer = $message->chatId;
+            $id = $message->chatId;
         }
 
         if (!$this->hasBackup()) {
