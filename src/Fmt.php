@@ -2,6 +2,8 @@
 
 namespace Rz;
 
+use Rz\Plugins\StylePlugin;
+
 final class Fmt
 {
     public static function json($value): string
@@ -17,8 +19,10 @@ final class Fmt
         return \sprintf("*Error:*\n```\n%s```", escape('```', $e));
     }
 
-    public static function bool(bool $switch): string
+    public static function bool(?bool $switch): string
     {
-        return $switch ? '✓' : '✗';
+        return $switch !== null
+            ? $switch ? '✓' : '✗'
+            : StylePlugin::EMPTY;
     }
 }
