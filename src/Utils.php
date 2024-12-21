@@ -63,12 +63,14 @@ trait Utils
             $this->logger($e);
         }
     }
-    public function catchFlood(Message $message, string $method, callable $cb): void
+    public function catchFlood(Message $message, string $method, callable $cb): bool
     {
         try {
             $cb();
+            return false;
         } catch (FloodWaitError $e) {
             $this->respondError($message, "$method: FLOOD_WAIT_{$e->getWaitTime()}");
+            return true;
         }
     }
 
