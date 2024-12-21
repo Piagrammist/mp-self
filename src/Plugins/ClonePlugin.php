@@ -8,8 +8,11 @@ use danog\MadelineProto\EventHandler\Filter\FilterCommand;
 use danog\MadelineProto\EventHandler\Filter\Combinator\FiltersAnd;
 use danog\MadelineProto\EventHandler\SimpleFilter\FromAdminOrOutgoing;
 
+use Rz\Fmt;
 use Rz\Utils;
+use Rz\Enums\GroupedStatus;
 use Rz\Filters\FilterActive;
+use function Rz\concatLines;
 
 final class ClonePlugin extends PluginEventHandler
 {
@@ -42,12 +45,17 @@ final class ClonePlugin extends PluginEventHandler
             return;
         }
 
-        $this->updateProfile($this->getBackup(), $message);
-        // TODO: check if updating was actually successful.
-        $this->respondOrDelete($message, \sprintf(
-            'Backup from "%s" restored successfully.',
-            \date('j/n H:i', $this->backupTime),
+        $date     = \date('j/n H:i', $this->backupTime);
+        $states   = $this->updateProfile($this->getBackup(), $message);
+        $response = $this->genUpdateResponse($states, \array_map(
+            static fn($text) => \sprintf($text, $date),
+            [
+                'success' => 'Backup from "%s" restored successfully.',
+                'partial' => 'Managed to restore backup from "%s" partially.',
+                'fail'    => 'Failed to restore backup from "%s"!',
+            ],
         ));
+        $this->respondOrDelete($message, $response, false);
     }
 
     #[FiltersAnd(new FilterActive, new FilterCommand('clone'))]
@@ -70,30 +78,39 @@ final class ClonePlugin extends PluginEventHandler
         if (!$this->hasBackup()) {
             $this->setBackup($this->fetchProfile('me'));
         }
-        $this->updateProfile($this->fetchProfile($id), $message);
-        // TODO: check if updating was actually successful.
-        $this->respondOrDelete($message, "User profile cloned successfully.");
+
+        $states   = $this->updateProfile($this->fetchProfile($id), $message);
+        $response = $this->genUpdateResponse($states, [
+            'success' => "User profile cloned successfully.",
+            'partial' => "Managed to clone user profile partially.",
+            'fail'    => "Failed to clone user profile!",
+        ]);
+        $this->respondOrDelete($message, $response, false);
     }
 
     public function updateProfile(array $profile, Message $message): array
     {
-        $result = [];
+        $states = [
+            'common'   => null,
+            'photo'    => null,
+            'birthday' => null,
+        ];
         $profile = self::filterProfile($profile);
         if ($profile['birthday']) {
-            $result['birthday'] = !$this->catchFlood($message, 'account.updateBirthday',
+            $states['birthday'] = !$this->catchFlood($message, 'account.updateBirthday',
                 fn() => $this->account->updateBirthday(birthday: $profile['birthday']),
             );
         }
         if ($profile['photo']) {
-            $result['photo'] = !$this->catchFlood($message, 'photos.updateProfilePhoto',
+            $states['photo'] = !$this->catchFlood($message, 'photos.updateProfilePhoto',
                 fn() => $this->photos->updateProfilePhoto(id: $profile['photo']),
             );
         }
         unset($profile['birthday'], $profile['photo']);
-        $result['common'] = !$this->catchFlood($message, 'account.updateProfile',
+        $states['common'] = !$this->catchFlood($message, 'account.updateProfile',
             fn() => $this->account->updateProfile(...\array_filter($profile)),
         );
-        return $result;
+        return $states;
     }
 
     public function fetchProfile($peer): array
@@ -176,5 +193,37 @@ final class ClonePlugin extends PluginEventHandler
             }
         }
         return $profile;
+    }
+
+    /**
+     * Generate profile update response, based on how many errors faced.
+     *
+     * @param array<bool> $updateStates
+     * @param array<string, string> $titles
+     * @throws \InvalidArgumentException
+     */
+    private function genUpdateResponse(array $updateStates, array $titles): string
+    {
+        $state = GroupedStatus::from(...$updateStates);
+
+        if (empty($titles[$state->value])) {
+            throw new \InvalidArgumentException(
+                \sprintf('Title for "%s" status not set', $state->value)
+            );
+        }
+        $title = \sprintf('_%s_', $titles[$state->value]);
+
+        if ($state !== GroupedStatus::PARTIAL)
+            return $title;
+
+        return concatLines(...[
+            $title,
+            '',
+            $this->prefix(
+                \sprintf("_Common: %s_",   Fmt::bool($updateStates['common'])),
+                \sprintf("_Photo: %s_",    Fmt::bool($updateStates['photo'])),
+                \sprintf("_Birthday: %s_", Fmt::bool($updateStates['birthday'])),
+            ),
+        ]);
     }
 }
