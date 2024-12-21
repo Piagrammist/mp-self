@@ -73,21 +73,25 @@ final class ClonePlugin extends PluginEventHandler
         $this->respondOrDelete($message, "User profile cloned successfully.");
     }
 
-    public function updateProfile(array $profile, Message $message): void
+    public function updateProfile(array $profile, Message $message): array
     {
+        $result = [];
         $profile = self::filterProfile($profile);
         if ($profile['birthday']) {
-            $this->catchFlood($message, 'account.updateBirthday',
+            $result['birthday'] = !$this->catchFlood($message, 'account.updateBirthday',
                 fn() => $this->account->updateBirthday(birthday: $profile['birthday']),
             );
         }
-        // if ($profile['photo']) {
-        //     $this->account->updateProfile();
-        // }
-        unset($profile['birthday']/*, $profile['photo']*/);
-        $this->catchFlood($message, 'account.updateProfile',
+        if ($profile['photo']) {
+            $result['photo'] = !$this->catchFlood($message, 'photos.updateProfilePhoto',
+                fn() => $this->photos->updateProfilePhoto(id: $profile['photo']),
+            );
+        }
+        unset($profile['birthday'], $profile['photo']);
+        $result['common'] = !$this->catchFlood($message, 'account.updateProfile',
             fn() => $this->account->updateProfile(...\array_filter($profile)),
         );
+        return $result;
     }
 
     public function fetchProfile($peer): array
