@@ -94,8 +94,8 @@ final class HelpPlugin extends PluginEventHandler
             '_Restore the profile backup if exists._',
 
             '',
-            '`.clone (reply)`',
-            '_Clone profile of the replied user._',
+            '`.clone <?peer> [reply]`',
+            '_Clone profile of the peer, replied user or current chat._',
 
             '',
             '`{} (reply)`',
