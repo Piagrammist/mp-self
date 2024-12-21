@@ -67,7 +67,9 @@ final class ClonePlugin extends PluginEventHandler
             return;
         }
 
-        // $this->setBackup($this->fetchProfile('me'));
+        if (!$this->hasBackup()) {
+            $this->setBackup($this->fetchProfile('me'));
+        }
         $this->updateProfile($this->fetchProfile($id), $message);
         // TODO: check if updating was actually successful.
         $this->respondOrDelete($message, "User profile cloned successfully.");
