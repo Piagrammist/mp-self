@@ -32,6 +32,7 @@ final class StylePlugin extends PluginEventHandler
         ));
     }
 
+    public const EMPTY = '—';
     public static array $allowedStyles = [
         '*'    => 'bold',
         '_'    => 'italic',

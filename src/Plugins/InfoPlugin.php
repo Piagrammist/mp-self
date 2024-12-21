@@ -22,14 +22,13 @@ final class InfoPlugin extends PluginEventHandler
     {
         $this->loading($message);
 
-        $empty = '—';
         $chat = $this->getInfo($message->chatId);
         if (!\in_array($chat['type'], ['user', 'bot'], true)) {
             $userId = ($replied = $message->getReply())
                 ? $replied->senderId
                 : $message->commandArgs[0]
                     ?? null;
-            $username = isset($chat['Chat']['username']) ? "`{$chat['Chat']['username']}`" : $empty;
+            $username = isset($chat['Chat']['username']) ? "`{$chat['Chat']['username']}`" : StylePlugin::EMPTY;
             $date = \date('j/n/Y', $chat['Chat']['date']);
             $lines = [
                 "*Chat*",
@@ -50,7 +49,7 @@ final class InfoPlugin extends PluginEventHandler
                 $name = $user['first_name'] . (
                     isset($user['last_name']) ? " {$user['last_name']}" : ''
                 );
-                $username = isset($user['username']) ? "`{$user['username']}`" : $empty;
+                $username = isset($user['username']) ? "`{$user['username']}`" : StylePlugin::EMPTY;
                 if ($hasChat = isset($lines)) {
                     $prevLines = [
                         \str_repeat('—', 13),
