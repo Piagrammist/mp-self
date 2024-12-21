@@ -93,17 +93,27 @@ final class ClonePlugin extends PluginEventHandler
     public function fetchProfile($peer): array
     {
         $info = $this->getFullInfo($peer);
-        $chat = $info['User'] ?? $info['Chat'];
         $full = $info['full'];
+        $type = $info['type'];
 
-        unset($chat['photo']['personal']);
+        if (\in_array($type, ['bot', 'user'], true)) {
+            $user = $info['User'];
+            return [
+                'first_name' => $user['first_name'],
+                'last_name'  => $user['last_name']     ?? null,
+                'about'      => $full['about']         ?? null,
+                'birthday'   => $full['birthday']      ?? null,
+                'photo'      => $full['profile_photo'] ?? null,
+            ];
+        }
 
+        $chat = $info['Chat'];
         return [
-            'first_name' => $chat['first_name'] ?? $chat['title'],
-            'last_name'  => $chat['last_name']  ?? null,
+            'first_name' => $chat['title'],
+            'last_name'  =>                        null,
             'about'      => $full['about']      ?? null,
-            'birthday'   => $full['birthday']   ?? null,
-            'photo'      => $chat['photo'],
+            'birthday'   =>                        null,
+            'photo'      => $full['chat_photo'] ?? null,
         ];
     }
 
