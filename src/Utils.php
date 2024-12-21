@@ -39,15 +39,15 @@ trait Utils
         $this->isVerbose() || $message->delete();
     }
 
-    public function respondIfVerbose(Message $message, string $text): void
+    public function respondIfVerbose(Message $message, string $text, bool $style = true): void
     {
         $this->isVerbose() &&
-            $message->editText($this->style($text), ParseMode::MARKDOWN);
+            $message->editText($style ? $this->style($text) : $text, ParseMode::MARKDOWN);
     }
-    public function respondOrDelete(Message $message, string $text): void
+    public function respondOrDelete(Message $message, string $text, bool $style = true): void
     {
         $this->isVerbose()
-            ? $message->editText($this->style($text), ParseMode::MARKDOWN)
+            ? $message->editText($style ? $this->style($text) : $text, ParseMode::MARKDOWN)
             : $message->delete();
     }
     public function respondError(Message $message, \Throwable|string $e): void
