@@ -72,7 +72,7 @@ final class ClonePlugin extends PluginEventHandler
             }
         } elseif ($id = $message->getReply()?->senderId) {
         } else {
-            return;
+            $peer = $message->chatId;
         }
 
         if (!$this->hasBackup()) {
