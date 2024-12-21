@@ -25,7 +25,6 @@ final class ClonePlugin extends PluginEventHandler
                 $this->respondOrDelete($message, "There was already no backup!");
                 return;
             }
-
             $this->clear();
             $this->respondOrDelete($message, "Backup deleted successfully.");
             return;

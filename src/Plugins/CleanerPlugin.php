@@ -100,9 +100,6 @@ final class CleanerPlugin extends PluginEventHandler
             $this->respondError($message, $e);
             return;
         }
-        try {
-            $this->respondOrDelete($message, $response);
-        } catch (\Throwable) {
-        }
+        $this->ignoreErrors(fn() => $this->respondOrDelete($message, $response));
     }
 }
