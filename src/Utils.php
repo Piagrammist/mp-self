@@ -55,6 +55,14 @@ trait Utils
         $message->reply(Fmt::error($e), ParseMode::MARKDOWN);
     }
 
+    public function ignoreErrors(callable $cb): void
+    {
+        try {
+            $cb();
+        } catch (\Throwable $e) {
+            $this->logger($e);
+        }
+    }
     public function catchFlood(Message $message, string $method, callable $cb): void
     {
         try {
