@@ -30,4 +30,24 @@ final class Fmt
     {
         return $text ?: StylePlugin::EMPTY;
     }
+
+    private const REQ_BIRTH_FIELDS = ['day', 'month'];
+    public static function birth(?array $parts): string
+    {
+        if (empty($parts))
+            return StylePlugin::EMPTY;
+
+        requireArrayKeys($parts, self::REQ_BIRTH_FIELDS);
+        if (!empty($parts['year'])) {
+            return \sprintf('%s/%s/%s',
+                $parts['month'],
+                $parts['day'],
+                $parts['year'],
+            );
+        }
+        return \sprintf('%s/%s',
+            $parts['month'],
+            $parts['day'],
+        );
+    }
 }

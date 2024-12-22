@@ -29,7 +29,7 @@ final class InfoPlugin extends PluginEventHandler
                 : $message->commandArgs[0]
                     ?? null;
             $username = isset($chat['Chat']['username']) ? "`{$chat['Chat']['username']}`" : StylePlugin::EMPTY;
-            $date = \date('j/n/Y', $chat['Chat']['date']);
+            $date = \date('n/j/Y', $chat['Chat']['date']);
             $lines = [
                 "*Chat*",
                 $this->prefix(
