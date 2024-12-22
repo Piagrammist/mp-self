@@ -24,6 +24,7 @@ function readableBytes(float $bytes, bool $si = false, int $dp = 2): string
     return \round($bytes, $dp) . ' ' . $units[$u];
 }
 
+/** @param array<string>|string $chars */
 function escape(array|string $chars, string $text): string
 {
     if (empty($chars)) {
@@ -52,4 +53,28 @@ function concatLines(string ...$lines): string
 function splitLines(string $text): array
 {
     return \explode("\n", \str_replace("\r", '', $text));
+}
+
+/**
+ * @param array<string|int>|string|int $requiredKeys
+ * @param bool $strict If `true`, use `empty()` for validation, `isset()` otherwise.
+ * @throws \InvalidArgumentException
+ */
+function requireArrayKeys(
+    array $haystack,
+    array|string|int $requiredKeys,
+    bool $strict = true,
+): void {
+    if (!is_array($requiredKeys)) {
+        $requiredKeys = [$requiredKeys];
+    }
+    $validator = $strict
+        ? static fn($v) =>  empty($v)
+        : static fn($v) => !isset($v);
+    $errorText = 'Required array field "%s" ' . ($strict ? 'is empty' : 'not set');
+    foreach ($requiredKeys as $key) {
+        if ($validator($haystack[$key] ?? null)) {
+            throw new \InvalidArgumentException(\sprintf($errorText, $key));
+        }
+    }
 }

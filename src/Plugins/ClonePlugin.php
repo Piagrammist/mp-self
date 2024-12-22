@@ -13,6 +13,7 @@ use Rz\Utils;
 use Rz\Enums\GroupedStatus;
 use Rz\Filters\FilterActive;
 use function Rz\concatLines;
+use function Rz\requireArrayKeys;
 
 final class ClonePlugin extends PluginEventHandler
 {
@@ -178,18 +179,11 @@ final class ClonePlugin extends PluginEventHandler
 
     public static function filterProfile(array $profile): array
     {
-        foreach (\array_keys($profile) as $key) {
-            if (!\in_array($key, self::FIELDS, true)) {
-                unset($profile[$key]);
-            }
-        }
-        foreach (self::REQ_FIELDS as $key) {
-            if (empty($profile[$key])) {
-                throw new \InvalidArgumentException(
-                    \sprintf("Required profile field '%s' not set", $key)
-                );
-            }
-        }
+        $profile = \array_filter($profile,
+            static fn($key) => \in_array($key, self::FIELDS, true),
+            ARRAY_FILTER_USE_KEY,
+        );
+        requireArrayKeys($profile, self::REQ_FIELDS);
         return $profile;
     }
 
