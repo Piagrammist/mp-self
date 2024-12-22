@@ -25,4 +25,9 @@ final class Fmt
             ? $switch ? '✓' : '✗'
             : StylePlugin::EMPTY;
     }
+
+    public static function str(?string $text): string
+    {
+        return $text ?: StylePlugin::EMPTY;
+    }
 }
