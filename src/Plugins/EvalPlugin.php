@@ -28,8 +28,13 @@ final class EvalPlugin extends PluginEventHandler
             \ob_start();
             eval($code);
             $output = \ob_get_clean();
-            $output = $output ? "*Result:*\n$output" : $this->style("No output.");
-            $message->reply($output, ParseMode::MARKDOWN);
+            $hasOutput = !empty($output);
+            if (!$hasOutput && !$this->isVerbose())
+                return;
+            $message->reply(
+                $hasOutput ? "*Result:*\n$output" : $this->style("No output."),
+                ParseMode::MARKDOWN,
+            );
         } catch (\Throwable $e) {
             if (\ob_get_length()) {
                 \ob_end_clean();

@@ -24,6 +24,8 @@ final class DumpPlugin extends PluginEventHandler
             return;
 
         try {
+            // Do not edit the message, since the dump could be large-
+            //    and get separated into multiple messages!
             $message->reply(Fmt::json($repliedTo), ParseMode::MARKDOWN);
         } catch (\Throwable $e) {
             $this->respondError($message, $e);
