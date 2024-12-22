@@ -2,6 +2,7 @@
 
 namespace Rz\Plugins;
 
+use danog\MadelineProto\ParseMode;
 use danog\MadelineProto\PluginEventHandler;
 use danog\MadelineProto\EventHandler\Message;
 use danog\MadelineProto\EventHandler\Filter\FilterCommand;
@@ -34,6 +35,27 @@ final class ClonePlugin extends PluginEventHandler
             return;
         }
 
+        if (\in_array($argOne, ['s', 'show'], true)) {
+            if (!$this->hasBackup()) {
+                $this->respond($message, "There is no backup to show!");
+                return;
+            }
+            $backup = $this->getBackup();
+            $lines  = [
+                \sprintf('*Backup of "%s"*', $this->getBackupDate()),
+                '',
+                $this->prefix(
+                    \sprintf("_First name: `%s`_", $backup['first_name']),
+                    \sprintf("_Last name: %s_",    Fmt::str  ($backup['last_name'], true)),
+                    \sprintf("_Birthday: %s_",     Fmt::birth($backup['birthday'],  true)),
+                    \sprintf("_Bio: %s_",          Fmt::str  ($backup['about'],     true)),
+                    \sprintf("_Photo: %s_",        Fmt::bool ( !empty($backup['photo']) )),
+                ),
+            ];
+            $message->editText(concatLines(...$lines), ParseMode::MARKDOWN);
+            return;
+        }
+
         $this->setBackup($this->fetchProfile('me'));
         $this->respondOrDelete($message, "Profile backed-up successfully.");
     }
@@ -46,7 +68,7 @@ final class ClonePlugin extends PluginEventHandler
             return;
         }
 
-        $date     = \date('n/j H:i', $this->backupTime);
+        $date     = $this->getBackupDate();
         $states   = $this->updateProfile($this->getBackup(), $message);
         $response = $this->genUpdateResponse($states, \array_map(
             static fn($text) => \sprintf($text, $date),
@@ -166,15 +188,19 @@ final class ClonePlugin extends PluginEventHandler
     {
         return $this->backupTime;
     }
+    public function getBackupDate(): string
+    {
+        return \date('n/j H:i', $this->backupTime);
+    }
 
     public function clear(): void
     {
-        $this->backup = [];
+        $this->backup     = [];
         $this->backupTime = 0;
     }
 
 
-    private const FIELDS = ['first_name', 'last_name', 'about', 'birthday', 'photo'];
+    private const     FIELDS = ['first_name', 'last_name', 'about', 'birthday', 'photo'];
     private const REQ_FIELDS = ['first_name'];
 
     public static function filterProfile(array $profile): array
