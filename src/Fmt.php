@@ -26,28 +26,30 @@ final class Fmt
             : StylePlugin::EMPTY;
     }
 
-    public static function str(?string $text): string
+    public static function str(?string $text, bool $copyable = false): string
     {
-        return $text ?: StylePlugin::EMPTY;
+        if (empty($text))
+            return StylePlugin::EMPTY;
+
+        if ($copyable) {
+            $text = "`$text`";
+        }
+        return $text;
     }
 
     private const REQ_BIRTH_FIELDS = ['day', 'month'];
-    public static function birth(?array $parts): string
+    public static function birth(?array $parts, bool $copyable = false): string
     {
         if (empty($parts))
             return StylePlugin::EMPTY;
 
         requireArrayKeys($parts, self::REQ_BIRTH_FIELDS);
-        if (!empty($parts['year'])) {
-            return \sprintf('%s/%s/%s',
-                $parts['month'],
-                $parts['day'],
-                $parts['year'],
-            );
+        $result = empty($parts['year'])
+            ? \sprintf('%s/%s',    $parts['month'], $parts['day'])
+            : \sprintf('%s/%s/%s', $parts['month'], $parts['day'], $parts['year']);
+        if ($copyable) {
+            $result = "`$result`";
         }
-        return \sprintf('%s/%s',
-            $parts['month'],
-            $parts['day'],
-        );
+        return $result;
     }
 }
