@@ -80,14 +80,14 @@ final class HelpPlugin extends PluginEventHandler
             '_Send x messages, each containing y \* txt. (y can be omitted!)_',
 
             '',
-            '`.del <num_x> <?s|service> <?a|after> [reply]`',
+            '`.del <num_x> <?s|service>/<?a|after> [reply]`',
             '_Delete x messages from the chat._',
             '_- If `service` is set, only service messages will be deleted._',
             '_- If replied to a message, only messages before (after, if set) the replied message will be deleted._',
 
             '',
-            '`.backup <?c|clear>`',
-            '_Make a profile backup, or delete the previous one._',
+            '`.backup <?s|show>/<?c|clear>`',
+            '_Make a profile backup, or show/delete the previous one._',
 
             '',
             '`.restore`',
@@ -109,8 +109,9 @@ final class HelpPlugin extends PluginEventHandler
             \str_repeat('—', 13),
             "*Notes*",
             $this->prefix(
-                "_Supported command prefixes are \"{$prefixes}\"_",
-                "_`()` means required reply, and `[]`, an optional one._",
+                \sprintf('_Supported command prefixes are "%s"_', $prefixes),
+                '_`()` indicates a required reply, and `[]`, an optional one._',
+                '_`/` between arguments indicates "or"._',
             ),
         );
         $message->editText($help, ParseMode::MARKDOWN);
